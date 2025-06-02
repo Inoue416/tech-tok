@@ -1,0 +1,31 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gradient Definitions -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <linearGradient id="pageGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e5e7eb"/>
+    </linearGradient>
+    <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="120" fill="url(#bgGradient)" />
+
+  <!-- Paper Page -->
+  <rect x="156" y="160" width="200" height="240" rx="20" fill="url(#pageGradient)" />
+  <path d="M156 160 q100 40 200 0" fill="none" stroke="#d1d5db" stroke-width="2" opacity="0.3"/>
+
+  <!-- Upward Swipe Arrow -->
+  <path d="M256 220 l-24 24 h16 v40 h16 v-40 h16 z" fill="url(#arrowGradient)" />
+
+  <!-- Optional finger curve (gesture hint) -->
+  <path d="M200 320 q56 80 112 0" fill="none" stroke="#60a5fa" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+
+</svg>
