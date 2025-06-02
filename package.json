@@ -10,6 +10,8 @@
 		"format": "biome format --write ./src/**/*.{js,ts,jsx,tsx}"
 	},
 	"dependencies": {
+		"@prisma/client": "^6.8.2",
+		"@prisma/extension-accelerate": "^2.0.1",
 		"next": "15.3.3",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0"
@@ -20,7 +22,9 @@
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"prisma": "^6.8.2",
 		"tailwindcss": "^4",
+		"tsx": "^4.19.4",
 		"typescript": "^5"
 	}
 }
