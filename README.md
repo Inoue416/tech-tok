@@ -15,6 +15,7 @@ TechTokは記述記事、ブログの要約を縦スクロールで読むこと�
 - PostgreSQL
 - Vercel
 - Supabase
+- Auth.js
 
 ...(TODO: 増えたら追記)
 
