@@ -42,4 +42,3 @@ next-env.d.ts
 
 # docker
 docker-psql/data
-docker-compose.yaml

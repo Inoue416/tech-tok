@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:16
+    container_name: techtok-postgres-db
+    environment:
+      POSTGRES_USER: user # ユーザー名
+      POSTGRES_PASSWORD: password # パスワード
+      POSTGRES_DB: techtok-db # データベース名
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker-psql/data:/var/lib/postgresql/data
