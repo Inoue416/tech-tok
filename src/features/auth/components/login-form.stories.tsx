@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { LoginForm } from "./login-form";
+import { LoginForm } from "@/features/auth/components/login-form";
 
 type OAuthProvider = "github" | "google";
 

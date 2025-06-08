@@ -2,8 +2,8 @@
 export { ScrollIndicator } from "./scroll-indicator";
 
 // 認証コンポーネント
-export { LoginForm } from "./auth";
-export type { LoginFormProps } from "./auth";
+export { LoginForm } from "@/features/auth";
+export type { LoginFormProps } from "@/features/auth";
 
 // フィード機能（features/feedから再エクスポート）
 export { VerticalScrollFeed, FeedItem } from "@/features/feed";
