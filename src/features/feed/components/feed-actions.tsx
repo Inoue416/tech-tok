@@ -5,7 +5,6 @@ import { Archive, BookOpen, Heart, Share } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import type { FeedItemData } from "../types";
-import { useRouter } from "next/navigation";
 
 interface FeedActionsProps {
 	data: FeedItemData;

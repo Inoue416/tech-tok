@@ -14,6 +14,8 @@ export const sampleFeedData: FeedItemData[] = [
 		author: {
 			id: "user1",
 			name: "nature_lover",
+			avatar:
+				"https://secure.gravatar.com/avatar/a31503cd951e57579074a84fbe79c3cc",
 		},
 		stats: {
 			likes: 12500,

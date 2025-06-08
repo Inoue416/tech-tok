@@ -13,6 +13,13 @@ export function FeedInfo({ data }: FeedInfoProps) {
 		<div className="flex-1 text-white">
 			{/* 作者情報 */}
 			<div className="mb-2 flex items-center gap-2">
+				{data.author.avatar && (
+					<img
+						src={data.author.avatar}
+						alt={data.author.name}
+						className="h-8 w-8 rounded-full"
+					/>
+				)}
 				<span className="font-semibold">{data.author.name}</span>
 			</div>
 

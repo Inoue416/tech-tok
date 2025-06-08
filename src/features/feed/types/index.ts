@@ -12,6 +12,7 @@ export interface FeedItemData {
 	};
 	author: {
 		id: string;
+		avatar?: string;
 		name: string;
 	};
 	stats: {
