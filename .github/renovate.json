@@ -1,0 +1,47 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:recommended"
+    ],
+    "baseBranches": [
+        "develop"
+    ],
+    "timezone": "Asia/Tokyo",
+    "schedule": [
+        "after 7pm on friday"
+    ],
+    "packageRules": [
+        {
+            "matchUpdateTypes": [
+                "major",
+                "minor",
+                "patch"
+            ],
+            "groupName": "all dependencies",
+            "groupSlug": "all",
+            "matchPackageNames": [
+                "*"
+            ]
+        }
+    ],
+    "ignoreDeps": [],
+    "assignees": [
+        "i-yuya"
+    ],
+    "reviewers": [
+        "i-yuya"
+    ],
+    "labels": [
+        "dependencies"
+    ],
+    "rangeStrategy": "pin",
+    "prHourlyLimit": 0,
+    "prConcurrentLimit": 0,
+    "automerge": false,
+    "lockFileMaintenance": {
+        "enabled": true,
+        "schedule": [
+            "after 7pm on friday"
+        ]
+    }
+}
