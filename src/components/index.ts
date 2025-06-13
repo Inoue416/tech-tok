@@ -1,6 +1,10 @@
 // 汎用コンポーネント
 export { ScrollIndicator } from "./scroll-indicator";
 
+// 認証コンポーネント
+export { LoginForm } from "@/features/auth";
+export type { LoginFormProps } from "@/features/auth";
+
 // フィード機能（features/feedから再エクスポート）
 export { VerticalScrollFeed, FeedItem } from "@/features/feed";
 export { FeedDemo } from "@/features/feed/components/feed-demo";
