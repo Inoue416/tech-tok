@@ -1,10 +1,10 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { ScrollIndicator } from "@/components/scroll-indicator";
+import { cn } from "@/lib/utils";
 import { useVerticalScroll } from "../hooks/use-vertical-scroll";
-import { FeedItem } from "./feed-item";
 import type { VerticalScrollFeedProps } from "../types";
+import { FeedItem } from "./feed-item";
 
 /**
  * TikTok風の縦スクロールフィードコンポーネント

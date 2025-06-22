@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { VerticalScrollFeed } from "./vertical-scroll-feed";
 import { sampleFeedData } from "../data/sample-data";
+import { VerticalScrollFeed } from "./vertical-scroll-feed";
 
 /**
  * フィード機能のデモコンポーネント

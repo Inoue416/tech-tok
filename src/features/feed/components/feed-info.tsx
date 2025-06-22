@@ -14,6 +14,8 @@ export function FeedInfo({ data }: FeedInfoProps) {
 			{/* 作者情報 */}
 			<div className="mb-2 flex items-center gap-2">
 				{data.author.avatar && (
+					// FIXME:プリフェッチはパフォーマンスとの兼ね合いがあるため
+					// Imageコンポーネントの利用をどうするかは検討中
 					<img
 						src={data.author.avatar}
 						alt={data.author.name}

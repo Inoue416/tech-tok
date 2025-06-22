@@ -1,9 +1,9 @@
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { FeedItemProps } from "../types";
+import { FeedActions } from "./feed-actions";
 import { FeedContent } from "./feed-content";
 import { FeedInfo } from "./feed-info";
-import { FeedActions } from "./feed-actions";
-import type { FeedItemProps } from "../types";
 
 /**
  * フィードアイテムコンポーネント
