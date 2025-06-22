@@ -6,8 +6,8 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "biome lint --apply ./src/**/*.{js,ts,jsx,tsx}",
-		"format": "biome format --write ./src/**/*.{js,ts,jsx,tsx}",
+		"lint": "biome lint --apply ./src/**/*.{ts,tsx}",
+		"format": "biome format --write ./src/**/*.{ts,tsx}",
 		"storybook": "storybook dev -p 6006"
 	},
 	"dependencies": {
