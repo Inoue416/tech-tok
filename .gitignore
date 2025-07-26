@@ -42,3 +42,7 @@ next-env.d.ts
 
 # docker
 docker-psql/data
+
+.cursor/**
+
+./vscode
