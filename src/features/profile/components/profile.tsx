@@ -8,15 +8,20 @@ import { ProfilePostList } from "./profile-post-list";
  */
 export function Profile({
 	profile,
-	posts,
+	likedPosts,
+	bookmarkedPosts,
+	displayType,
 	onFollow,
 	onUnfollow,
 	onShare,
 	onPostClick,
 	onProfileEdit,
-	onPostDelete,
-	onPostEdit,
+	onDisplayTypeChange,
+	onUnlike,
+	onUnbookmark,
 }: ProfileProps) {
+	const currentPosts = displayType === "liked" ? likedPosts : bookmarkedPosts;
+
 	return (
 		<div className="max-w-2xl mx-auto space-y-8">
 			{/* プロフィールヘッダー */}
@@ -33,11 +38,13 @@ export function Profile({
 
 			{/* 投稿リスト */}
 			<ProfilePostList
-				posts={posts}
+				posts={currentPosts}
+				displayType={displayType}
 				isOwnProfile={profile.isOwnProfile}
 				onPostClick={onPostClick}
-				onPostDelete={onPostDelete}
-				onPostEdit={onPostEdit}
+				onDisplayTypeChange={onDisplayTypeChange}
+				onUnlike={onUnlike}
+				onUnbookmark={onUnbookmark}
 			/>
 		</div>
 	);
