@@ -43,16 +43,16 @@ export default function Home() {
 			// ログイン済み：全ての投稿を表示
 			setFeedData(sampleFeedData);
 		} else {
-			// 未ログイン：最初の3件のみ表示
-			const limitedData = sampleFeedData.slice(0, 3);
+			// 未ログイン：最初の10件のみ表示
+			const limitedData = sampleFeedData.slice(0, 10);
 			setFeedData(limitedData);
 		}
 	}, [isLoggedIn]);
 
 	// 未ログインユーザーがスクロールを続けた時のログイン促進
 	const handleItemChange = (index: number) => {
-		if (!isLoggedIn && index >= 2) {
-			// 3番目の投稿に到達したらログイン促進を表示
+		if (!isLoggedIn && index >= 9) {
+			// 10番目の投稿に到達したらログイン促進を表示
 			setShowLoginPrompt(true);
 		}
 	};
