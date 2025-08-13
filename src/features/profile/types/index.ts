@@ -29,11 +29,12 @@ export interface Technology {
 export interface ProfileStats {
 	followers: number;
 	following: number;
-	posts: number;
+	likedPosts: number;
+	bookmarkedPosts: number;
 }
 
 /**
- * プロフィール投稿の型定義
+ * プロフィール投稿の型定義（いいね・ブックマーク用）
  */
 export interface ProfilePost {
 	id: string;
@@ -45,6 +46,11 @@ export interface ProfilePost {
 		description?: string;
 		thumbnail?: string;
 	};
+	author: {
+		id: string;
+		avatar?: string;
+		name: string;
+	};
 	createdAt: string;
 	stats: {
 		likes: number;
@@ -52,7 +58,16 @@ export interface ProfilePost {
 		shares: number;
 	};
 	hashtags?: string[];
+	isLiked: boolean;
+	isBookmarked: boolean;
+	likedAt?: string;
+	bookmarkedAt?: string;
 }
+
+/**
+ * プロフィール投稿表示タイプ
+ */
+export type ProfilePostDisplayType = "liked" | "bookmarked";
 
 /**
  * プロフィール編集データの型定義
@@ -69,14 +84,17 @@ export interface ProfileEditData {
  */
 export interface ProfileProps {
 	profile: UserProfile;
-	posts: ProfilePost[];
+	likedPosts: ProfilePost[];
+	bookmarkedPosts: ProfilePost[];
+	displayType: ProfilePostDisplayType;
 	onFollow?: (userId: string) => void;
 	onUnfollow?: (userId: string) => void;
 	onShare?: (profile: UserProfile) => void;
 	onPostClick?: (post: ProfilePost) => void;
 	onProfileEdit?: (data: ProfileEditData) => void;
-	onPostDelete?: (postId: string) => void;
-	onPostEdit?: (post: ProfilePost) => void;
+	onDisplayTypeChange?: (type: ProfilePostDisplayType) => void;
+	onUnlike?: (postId: string) => void;
+	onUnbookmark?: (postId: string) => void;
 }
 
 /**
@@ -110,8 +128,10 @@ export interface ProfileStatsProps {
  */
 export interface ProfilePostListProps {
 	posts: ProfilePost[];
+	displayType: ProfilePostDisplayType;
 	isOwnProfile: boolean;
 	onPostClick?: (post: ProfilePost) => void;
-	onPostDelete?: (postId: string) => void;
-	onPostEdit?: (post: ProfilePost) => void;
+	onDisplayTypeChange?: (type: ProfilePostDisplayType) => void;
+	onUnlike?: (postId: string) => void;
+	onUnbookmark?: (postId: string) => void;
 }

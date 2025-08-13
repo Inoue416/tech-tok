@@ -37,7 +37,8 @@ function StatItem({ label, value, className }: StatItemProps) {
 export function ProfileStats({ stats }: ProfileStatsProps) {
 	return (
 		<div className="flex justify-center gap-8 py-4">
-			<StatItem label="投稿" value={stats.posts} />
+			<StatItem label="いいね" value={stats.likedPosts} />
+			<StatItem label="ブックマーク" value={stats.bookmarkedPosts} />
 			<StatItem label="フォロワー" value={stats.followers} />
 			<StatItem label="フォロー中" value={stats.following} />
 		</div>

@@ -4,15 +4,16 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	ownProfile,
-	samplePosts,
+	sampleBookmarkedPosts,
+	sampleLikedPosts,
 	sampleProfile,
 } from "@/features/profile/data/sample-data";
 import type {
 	ProfileEditData,
 	ProfilePost,
+	ProfilePostDisplayType,
 	UserProfile,
 } from "@/features/profile/types";
-import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import { Profile } from "./profile";
 import { ProfileEditDialog } from "./profile-edit-dialog";
 
@@ -22,10 +23,13 @@ import { ProfileEditDialog } from "./profile-edit-dialog";
 export function ProfileDemo() {
 	const [currentProfile, setCurrentProfile] =
 		useState<UserProfile>(sampleProfile);
-	const [posts, setPosts] = useState<ProfilePost[]>(samplePosts);
+	const [likedPosts, setLikedPosts] = useState<ProfilePost[]>(sampleLikedPosts);
+	const [bookmarkedPosts, setBookmarkedPosts] = useState<ProfilePost[]>(
+		sampleBookmarkedPosts,
+	);
+	const [displayType, setDisplayType] =
+		useState<ProfilePostDisplayType>("liked");
 	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-	const [postToDelete, setPostToDelete] = useState<string | null>(null);
 
 	const handleFollow = (userId: string) => {
 		console.log("フォロー:", userId);
@@ -86,29 +90,49 @@ export function ProfileDemo() {
 		alert("プロフィールを更新しました！");
 	};
 
-	const handlePostEdit = (post: ProfilePost) => {
-		console.log("投稿編集:", post);
-		// 実際の実装では、投稿編集ダイアログを表示
-		alert(`投稿「${post.content.title}」を編集します（実装予定）`);
+	const handleDisplayTypeChange = (type: ProfilePostDisplayType) => {
+		setDisplayType(type);
 	};
 
-	const handlePostDelete = (postId: string) => {
-		setPostToDelete(postId);
-		setIsDeleteDialogOpen(true);
+	const handleUnlike = (postId: string) => {
+		console.log("いいね取り消し:", postId);
+		setLikedPosts((prev) => prev.filter((post) => post.id !== postId));
+		setCurrentProfile((prev) => ({
+			...prev,
+			stats: {
+				...prev.stats,
+				likedPosts: Math.max(0, prev.stats.likedPosts - 1),
+			},
+		}));
+		alert("いいねを取り消しました！");
 	};
 
-	const handleDeleteConfirm = () => {
-		if (postToDelete) {
-			setPosts((prev) => prev.filter((post) => post.id !== postToDelete));
-			setPostToDelete(null);
-			alert("投稿を削除しました！");
-		}
+	const handleUnbookmark = (postId: string) => {
+		console.log("ブックマーク削除:", postId);
+		setBookmarkedPosts((prev) => prev.filter((post) => post.id !== postId));
+		setCurrentProfile((prev) => ({
+			...prev,
+			stats: {
+				...prev.stats,
+				bookmarkedPosts: Math.max(0, prev.stats.bookmarkedPosts - 1),
+			},
+		}));
+		alert("ブックマークを削除しました！");
 	};
 
 	const toggleProfileType = () => {
 		setCurrentProfile((prev) =>
 			prev.isOwnProfile ? sampleProfile : ownProfile,
 		);
+		// プロフィールタイプが変わったときにデータもリセット
+		if (currentProfile.isOwnProfile) {
+			setLikedPosts(sampleLikedPosts);
+			setBookmarkedPosts(sampleBookmarkedPosts);
+		} else {
+			// 自分のプロフィール用のデータ（簡単なサンプル）
+			setLikedPosts(sampleLikedPosts.slice(0, 2));
+			setBookmarkedPosts(sampleBookmarkedPosts.slice(0, 2));
+		}
 	};
 
 	return (
@@ -130,14 +154,17 @@ export function ProfileDemo() {
 				{/* プロフィールコンポーネント */}
 				<Profile
 					profile={currentProfile}
-					posts={posts}
+					likedPosts={likedPosts}
+					bookmarkedPosts={bookmarkedPosts}
+					displayType={displayType}
 					onFollow={handleFollow}
 					onUnfollow={handleUnfollow}
 					onShare={handleShare}
 					onPostClick={handlePostClick}
 					onProfileEdit={handleProfileEdit}
-					onPostDelete={handlePostDelete}
-					onPostEdit={handlePostEdit}
+					onDisplayTypeChange={handleDisplayTypeChange}
+					onUnlike={handleUnlike}
+					onUnbookmark={handleUnbookmark}
 				/>
 
 				{/* プロフィール編集ダイアログ */}
@@ -146,13 +173,6 @@ export function ProfileDemo() {
 					onOpenChange={setIsEditDialogOpen}
 					profile={currentProfile}
 					onSave={handleProfileSave}
-				/>
-
-				{/* 削除確認ダイアログ */}
-				<DeleteConfirmationDialog
-					open={isDeleteDialogOpen}
-					onOpenChange={setIsDeleteDialogOpen}
-					onConfirm={handleDeleteConfirm}
 				/>
 			</div>
 		</div>
