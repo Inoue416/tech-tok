@@ -1,11 +1,11 @@
 import {
-	Edit,
+	BookmarkCheck,
 	Heart,
 	MessageCircle,
 	MoreHorizontal,
 	Play,
 	Share2,
-	Trash2,
+	X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,15 +15,19 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { ProfilePost } from "@/features/profile/types";
+import type {
+	ProfilePost,
+	ProfilePostDisplayType,
+} from "@/features/profile/types";
 import { cn } from "@/lib/utils";
 
 interface ProfilePostItemProps {
 	post: ProfilePost;
+	displayType: ProfilePostDisplayType;
 	isOwnProfile?: boolean;
 	onClick?: (post: ProfilePost) => void;
-	onEdit?: (post: ProfilePost) => void;
-	onDelete?: (postId: string) => void;
+	onUnlike?: (postId: string) => void;
+	onUnbookmark?: (postId: string) => void;
 }
 
 /**
@@ -31,23 +35,24 @@ interface ProfilePostItemProps {
  */
 export function ProfilePostItem({
 	post,
+	displayType,
 	isOwnProfile,
 	onClick,
-	onEdit,
-	onDelete,
+	onUnlike,
+	onUnbookmark,
 }: ProfilePostItemProps) {
 	const handleClick = () => {
 		onClick?.(post);
 	};
 
-	const handleEdit = (e: React.MouseEvent) => {
+	const handleUnlike = (e: React.MouseEvent) => {
 		e.stopPropagation();
-		onEdit?.(post);
+		onUnlike?.(post.id);
 	};
 
-	const handleDelete = (e: React.MouseEvent) => {
+	const handleUnbookmark = (e: React.MouseEvent) => {
 		e.stopPropagation();
-		onDelete?.(post.id);
+		onUnbookmark?.(post.id);
 	};
 
 	const formatDate = (dateString: string) => {
@@ -80,6 +85,16 @@ export function ProfilePostItem({
 		return num.toString();
 	};
 
+	const getActionDate = () => {
+		if (displayType === "liked" && post.likedAt) {
+			return formatDate(post.likedAt);
+		}
+		if (displayType === "bookmarked" && post.bookmarkedAt) {
+			return formatDate(post.bookmarkedAt);
+		}
+		return formatDate(post.createdAt);
+	};
+
 	return (
 		<Card
 			className={cn(
@@ -91,7 +106,7 @@ export function ProfilePostItem({
 			<CardContent className="p-0">
 				{/* サムネイル/コンテンツエリア */}
 				<div className="relative aspect-[4/5] bg-muted">
-					{/* 編集・削除メニュー（自分の投稿のみ） */}
+					{/* 削除メニュー（自分のプロフィールのみ） */}
 					{isOwnProfile && (
 						<div className="absolute top-2 right-2 z-10">
 							<DropdownMenu>
@@ -105,17 +120,18 @@ export function ProfilePostItem({
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="end">
-									<DropdownMenuItem onClick={handleEdit}>
-										<Edit className="size-4 mr-2" />
-										編集
-									</DropdownMenuItem>
-									<DropdownMenuItem
-										onClick={handleDelete}
-										className="text-destructive focus:text-destructive"
-									>
-										<Trash2 className="size-4 mr-2" />
-										削除
-									</DropdownMenuItem>
+									{displayType === "liked" && (
+										<DropdownMenuItem onClick={handleUnlike}>
+											<X className="size-4 mr-2" />
+											いいねを取り消し
+										</DropdownMenuItem>
+									)}
+									{displayType === "bookmarked" && (
+										<DropdownMenuItem onClick={handleUnbookmark}>
+											<X className="size-4 mr-2" />
+											ブックマークを削除
+										</DropdownMenuItem>
+									)}
 								</DropdownMenuContent>
 							</DropdownMenu>
 						</div>
@@ -194,7 +210,7 @@ export function ProfilePostItem({
 						</div>
 					)}
 
-					{/* 統計情報と投稿日時 */}
+					{/* 統計情報とアクション日時 */}
 					<div className="flex items-center justify-between text-xs text-muted-foreground">
 						<div className="flex items-center gap-3">
 							<div className="flex items-center gap-1">
@@ -210,7 +226,23 @@ export function ProfilePostItem({
 								{formatNumber(post.stats.shares)}
 							</div>
 						</div>
-						<span>{formatDate(post.createdAt)}</span>
+						<div className="flex items-center gap-2">
+							{/* アクション状態表示 */}
+							{displayType === "liked" && post.isLiked && (
+								<Heart className="size-4 text-red-500 fill-red-500" />
+							)}
+							{displayType === "bookmarked" && post.isBookmarked && (
+								<BookmarkCheck className="size-4 text-blue-500 fill-blue-500" />
+							)}
+							<span>
+								{displayType === "liked"
+									? "いいね: "
+									: displayType === "bookmarked"
+										? "保存: "
+										: ""}
+								{getActionDate()}
+							</span>
+						</div>
 					</div>
 				</div>
 			</CardContent>
