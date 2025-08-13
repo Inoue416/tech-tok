@@ -2,19 +2,11 @@ import {
 	BookmarkCheck,
 	Heart,
 	MessageCircle,
-	MoreHorizontal,
 	Play,
 	Share2,
-	X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import type {
 	ProfilePost,
 	ProfilePostDisplayType,
@@ -55,26 +47,6 @@ export function ProfilePostItem({
 		onUnbookmark?.(post.id);
 	};
 
-	const formatDate = (dateString: string) => {
-		const date = new Date(dateString);
-		const now = new Date();
-		const diffInHours = Math.floor(
-			(now.getTime() - date.getTime()) / (1000 * 60 * 60),
-		);
-
-		if (diffInHours < 1) {
-			return "たった今";
-		}
-		if (diffInHours < 24) {
-			return `${diffInHours}時間前`;
-		}
-		const diffInDays = Math.floor(diffInHours / 24);
-		if (diffInDays < 7) {
-			return `${diffInDays}日前`;
-		}
-		return date.toLocaleDateString("ja-JP");
-	};
-
 	const formatNumber = (num: number): string => {
 		if (num >= 1000000) {
 			return `${(num / 1000000).toFixed(1)}M`;
@@ -83,16 +55,6 @@ export function ProfilePostItem({
 			return `${(num / 1000).toFixed(1)}K`;
 		}
 		return num.toString();
-	};
-
-	const getActionDate = () => {
-		if (displayType === "liked" && post.likedAt) {
-			return formatDate(post.likedAt);
-		}
-		if (displayType === "bookmarked" && post.bookmarkedAt) {
-			return formatDate(post.bookmarkedAt);
-		}
-		return formatDate(post.createdAt);
 	};
 
 	return (
@@ -106,34 +68,29 @@ export function ProfilePostItem({
 			<CardContent className="p-0">
 				{/* サムネイル/コンテンツエリア */}
 				<div className="relative aspect-[4/5] bg-muted">
-					{/* 削除メニュー（自分のプロフィールのみ） */}
+					{/* アクションボタン（自分のプロフィールのみ） */}
 					{isOwnProfile && (
 						<div className="absolute top-2 right-2 z-10">
-							<DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									<Button
-										size="icon"
-										variant="secondary"
-										className="size-8 bg-black/50 hover:bg-black/70 text-white border-0"
-									>
-										<MoreHorizontal className="size-4" />
-									</Button>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent align="end">
-									{displayType === "liked" && (
-										<DropdownMenuItem onClick={handleUnlike}>
-											<X className="size-4 mr-2" />
-											いいねを取り消し
-										</DropdownMenuItem>
-									)}
-									{displayType === "bookmarked" && (
-										<DropdownMenuItem onClick={handleUnbookmark}>
-											<X className="size-4 mr-2" />
-											ブックマークを削除
-										</DropdownMenuItem>
-									)}
-								</DropdownMenuContent>
-							</DropdownMenu>
+							{displayType === "liked" && post.isLiked && (
+								<Button
+									size="icon"
+									variant="secondary"
+									className="size-8 bg-black/50 hover:bg-black/70 text-white border-0"
+									onClick={handleUnlike}
+								>
+									<Heart className="size-4 fill-red-500 text-red-500" />
+								</Button>
+							)}
+							{displayType === "bookmarked" && post.isBookmarked && (
+								<Button
+									size="icon"
+									variant="secondary"
+									className="size-8 bg-black/50 hover:bg-black/70 text-white border-0"
+									onClick={handleUnbookmark}
+								>
+									<BookmarkCheck className="size-4 fill-blue-500 text-blue-500" />
+								</Button>
+							)}
 						</div>
 					)}
 					{post.type === "video" && post.content.thumbnail ? (
@@ -210,38 +167,19 @@ export function ProfilePostItem({
 						</div>
 					)}
 
-					{/* 統計情報とアクション日時 */}
-					<div className="flex items-center justify-between text-xs text-muted-foreground">
-						<div className="flex items-center gap-3">
-							<div className="flex items-center gap-1">
-								<Heart className="size-3" />
-								{formatNumber(post.stats.likes)}
-							</div>
-							<div className="flex items-center gap-1">
-								<MessageCircle className="size-3" />
-								{formatNumber(post.stats.comments)}
-							</div>
-							<div className="flex items-center gap-1">
-								<Share2 className="size-3" />
-								{formatNumber(post.stats.shares)}
-							</div>
+					{/* 統計情報 */}
+					<div className="flex items-center gap-3 text-xs text-muted-foreground">
+						<div className="flex items-center gap-1">
+							<Heart className="size-3" />
+							{formatNumber(post.stats.likes)}
 						</div>
-						<div className="flex items-center gap-2">
-							{/* アクション状態表示 */}
-							{displayType === "liked" && post.isLiked && (
-								<Heart className="size-4 text-red-500 fill-red-500" />
-							)}
-							{displayType === "bookmarked" && post.isBookmarked && (
-								<BookmarkCheck className="size-4 text-blue-500 fill-blue-500" />
-							)}
-							<span>
-								{displayType === "liked"
-									? "いいね: "
-									: displayType === "bookmarked"
-										? "保存: "
-										: ""}
-								{getActionDate()}
-							</span>
+						<div className="flex items-center gap-1">
+							<MessageCircle className="size-3" />
+							{formatNumber(post.stats.comments)}
+						</div>
+						<div className="flex items-center gap-1">
+							<Share2 className="size-3" />
+							{formatNumber(post.stats.shares)}
 						</div>
 					</div>
 				</div>

@@ -1,3 +1,4 @@
+import { Bookmark, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type {
 	ProfilePostDisplayType,
@@ -47,16 +48,18 @@ export function ProfilePostList({
 					variant={displayType === "liked" ? "default" : "outline"}
 					size="sm"
 					onClick={() => onDisplayTypeChange?.("liked")}
-					className="flex-1"
+					className="flex-1 flex items-center gap-2"
 				>
+					<Heart className="size-4" />
 					いいね
 				</Button>
 				<Button
 					variant={displayType === "bookmarked" ? "default" : "outline"}
 					size="sm"
 					onClick={() => onDisplayTypeChange?.("bookmarked")}
-					className="flex-1"
+					className="flex-1 flex items-center gap-2"
 				>
+					<Bookmark className="size-4" />
 					ブックマーク
 				</Button>
 			</div>
