@@ -4,30 +4,30 @@
 
 ```mermaid
 erDiagram
-  USER ||--o{ POST : "authors"
-  USER ||--o{ LIKE : "likes"
-  USER ||--o{ BOOKMARK : "bookmarks"
-  USER ||--o{ FOLLOW : "follows"
-  USER ||--o{ COMMENT : "comments"
-  USER ||--o{ NOTIFICATION : "receives"
+  USER ||--o{ POST : authors
+  USER ||--o{ LIKE : likes
+  USER ||--o{ BOOKMARK : bookmarks
+  USER ||--o{ FOLLOW : follows
+  USER ||--o{ COMMENT : comments
+  USER ||--o{ NOTIFICATION : receives
+  USER ||--o{ POST_SHARE : shares
+  USER ||--o{ USER_TECHNOLOGY : uses
 
-  POST ||--o{ LIKE : "liked by"
-  POST ||--o{ BOOKMARK : "bookmarked by"
-  POST ||--o{ COMMENT : "comments"
-  POST ||--o{ POST_HASHTAG : "tags"
-  POST ||--o{ POST_SHARE : "shares"
+  POST ||--o{ LIKE : liked_by
+  POST ||--o{ BOOKMARK : bookmarked_by
+  POST ||--o{ COMMENT : comments
+  POST ||--o{ POST_HASHTAG : tagged_with
+  POST ||--o{ POST_SHARE : shared_as
 
-  HASHTAG ||--o{ POST_HASHTAG : "used in"
-
-  FOLLOWER(USER) ||--o{ FOLLOW : "follows"
-  FOLLOWING(USER) ||--o{ FOLLOW : "followed"
+  HASHTAG ||--o{ POST_HASHTAG : used_in
+  TECHNOLOGY ||--o{ USER_TECHNOLOGY : used_by
 
   USER {
     uuid id PK
-    text username UK
-    text display_name
-    text avatar_url
-    text bio
+    string username UK
+    string display_name
+    string avatar_url
+    string bio
     timestamp created_at
     timestamp updated_at
   }
@@ -35,11 +35,11 @@ erDiagram
   POST {
     uuid id PK
     uuid author_id FK
-    enum type "text|video"
-    text title
-    text body
-    text video_url
-    text thumbnail_url
+    string type
+    string title
+    string body
+    string video_url
+    string thumbnail_url
     timestamp created_at
     timestamp updated_at
   }
@@ -49,7 +49,6 @@ erDiagram
     uuid user_id FK
     uuid post_id FK
     timestamp created_at
-    UNIQUE(user_id, post_id)
   }
 
   BOOKMARK {
@@ -57,15 +56,14 @@ erDiagram
     uuid user_id FK
     uuid post_id FK
     timestamp created_at
-    UNIQUE(user_id, post_id)
   }
 
   COMMENT {
     uuid id PK
     uuid post_id FK
     uuid user_id FK
-    text body
-    uuid parent_comment_id FK "nullable for threads"
+    string body
+    uuid parent_comment_id FK
     timestamp created_at
     timestamp updated_at
   }
@@ -75,12 +73,11 @@ erDiagram
     uuid follower_id FK
     uuid following_id FK
     timestamp created_at
-    UNIQUE(follower_id, following_id)
   }
 
   HASHTAG {
     uuid id PK
-    text name UK
+    string name UK
     timestamp created_at
   }
 
@@ -88,7 +85,6 @@ erDiagram
     uuid id PK
     uuid post_id FK
     uuid hashtag_id FK
-    UNIQUE(post_id, hashtag_id)
   }
 
   POST_SHARE {
@@ -100,16 +96,34 @@ erDiagram
 
   NOTIFICATION {
     uuid id PK
-    uuid user_id FK "recipient"
-    enum type "like|comment|follow|share"
-    uuid actor_id FK "who did it"
-    uuid post_id FK "optional"
-    uuid comment_id FK "optional"
+    uuid user_id FK
+    string type
+    uuid actor_id FK
+    uuid post_id FK
+    uuid comment_id FK
     boolean is_read
+    timestamp created_at
+  }
+
+  TECHNOLOGY {
+    uuid id PK
+    string name
+    string category
+    string color
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  USER_TECHNOLOGY {
+    uuid id PK
+    uuid user_id FK
+    uuid technology_id FK
     timestamp created_at
   }
 ```
 
 補足:
 - 認証は NextAuth.js を想定。必要に応じて `Account`, `Session`, `VerificationToken` を追加可能（Auth.js Prisma Adapter準拠）。
+- `POST.type` は `text | video` を想定。
+- 複合ユニーク制約（例: `LIKE(user_id, post_id)`、`BOOKMARK(user_id, post_id)`、`FOLLOW(follower_id, following_id)`、`POST_HASHTAG(post_id, hashtag_id)`、`USER_TECHNOLOGY(user_id, technology_id)`）はDBで付与してください（Mermaidの記法上は注釈のみ）。
 - 統計値は集計で取得する想定。高頻度で必要なら `post_metrics` や `user_metrics` のマテビュー/集計テーブルを別途追加。
