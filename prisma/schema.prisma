@@ -1,0 +1,402 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// Auth.js (NextAuth.js) Tables
+// ============================================================================
+
+model User {
+  id            String    @id @default(cuid())
+  username      String?   @unique
+  displayName   String?   @map("display_name")
+  name          String?   // Auth.js standard field
+  email         String?   @unique // Auth.js standard field
+  emailVerified DateTime? @map("email_verified") // Auth.js standard field
+  image         String?   // Auth.js standard field (avatar_url equivalent)
+  bio           String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Auth.js relations
+  accounts Account[]
+
+  // App-specific relations
+  posts            Post[]
+  likes            Like[]
+  bookmarks        Bookmark[]
+  comments         Comment[]
+  notifications    Notification[]
+  shares           PostShare[]
+  userTechnologies UserTechnology[]
+  
+  // Self-referencing for follow functionality
+  followers Follow[] @relation("UserFollowers")
+  following Follow[] @relation("UserFollowing")
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+// ============================================================================
+// Application-Specific Tables
+// ============================================================================
+
+enum PostType {
+  TEXT
+  VIDEO
+}
+
+model Post {
+  id           String   @id @default(cuid())
+  authorId     String   @map("author_id")
+  type         PostType @default(TEXT)
+  title        String
+  body         String?  @db.Text
+  videoUrl     String?  @map("video_url")
+  thumbnailUrl String?  @map("thumbnail_url")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  author   User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes    Like[]
+  bookmarks Bookmark[]
+  comments Comment[]
+  hashtags PostHashtag[]
+  shares   PostShare[]
+  feedItems FeedItem[]
+
+  @@index([authorId])
+  @@index([createdAt])
+  @@map("posts")
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  postId    String   @map("post_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([postId])
+  @@map("likes")
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  postId    String   @map("post_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([userId])
+  @@map("bookmarks")
+}
+
+model Comment {
+  id              String   @id @default(cuid())
+  postId          String   @map("post_id")
+  userId          String   @map("user_id")
+  body            String   @db.Text
+  parentCommentId String?  @map("parent_comment_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parentComment Comment?  @relation("CommentReplies", fields: [parentCommentId], references: [id])
+  replies       Comment[] @relation("CommentReplies")
+
+  @@index([postId])
+  @@index([userId])
+  @@map("comments")
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String   @map("follower_id")
+  followingId String   @map("following_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  follower  User @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+  @@map("follows")
+}
+
+model Hashtag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  postHashtags     PostHashtag[]
+  rssEntryHashtags RssEntryHashtag[]
+
+  @@map("hashtags")
+}
+
+model PostHashtag {
+  id       String @id @default(cuid())
+  postId   String @map("post_id")
+  hashtagId String @map("hashtag_id")
+
+  post    Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  hashtag Hashtag @relation(fields: [hashtagId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, hashtagId])
+  @@map("post_hashtags")
+}
+
+model PostShare {
+  id        String   @id @default(cuid())
+  postId    String   @map("post_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([userId])
+  @@map("post_shares")
+}
+
+enum NotificationType {
+  LIKE
+  COMMENT
+  FOLLOW
+  SHARE
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String           @map("user_id")
+  type      NotificationType
+  actorId   String?          @map("actor_id")
+  postId    String?          @map("post_id")
+  commentId String?          @map("comment_id")
+  isRead    Boolean          @default(false) @map("is_read")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model Technology {
+  id        String   @id @default(cuid())
+  name      String
+  category  String?
+  color     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  userTechnologies   UserTechnology[]
+  sourceTechnologies SourceTechnology[]
+
+  @@map("technologies")
+}
+
+model UserTechnology {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  technologyId String   @map("technology_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  technology Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, technologyId])
+  @@map("user_technologies")
+}
+
+// ============================================================================
+// RSS Feed Management Tables
+// ============================================================================
+
+model RssSource {
+  id                     String   @id @default(cuid())
+  feedUrl                String   @unique @map("feed_url")
+  siteUrl                String?  @map("site_url")
+  title                  String?
+  description            String?  @db.Text
+  language               String?
+  category               String?
+  isActive               Boolean  @default(true) @map("is_active")
+  fetchIntervalMinutes   Int      @default(60) @map("fetch_interval_minutes")
+  etag                   String?
+  lastModified           String?  @map("last_modified")
+  lastFetchedAt          DateTime? @map("last_fetched_at")
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  entries            RssEntry[]
+  fetchLogs          RssFetchLog[]
+  sourceTechnologies SourceTechnology[]
+
+  @@index([isActive])
+  @@index([lastFetchedAt])
+  @@map("rss_sources")
+}
+
+model RssEntry {
+  id            String    @id @default(cuid())
+  sourceId      String    @map("source_id")
+  guid          String
+  link          String?
+  title         String
+  description   String?   @db.Text
+  contentHtml   String?   @map("content_html") @db.Text
+  contentText   String?   @map("content_text") @db.Text
+  authorName    String?   @map("author_name")
+  language      String?
+  imageUrl      String?   @map("image_url")
+  publishedAt   DateTime  @map("published_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  contentHash   String    @map("content_hash")
+
+  source      RssSource         @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  enclosures  RssEnclosure[]
+  hashtags    RssEntryHashtag[]
+  feedItems   FeedItem[]
+
+  @@unique([sourceId, guid])
+  @@index([publishedAt])
+  @@index([sourceId])
+  @@map("rss_entries")
+}
+
+model RssEnclosure {
+  id           String  @id @default(cuid())
+  entryId      String  @map("entry_id")
+  url          String
+  mimeType     String? @map("mime_type")
+  length       Int?
+  thumbnailUrl String? @map("thumbnail_url")
+
+  entry RssEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@index([entryId])
+  @@map("rss_enclosures")
+}
+
+model RssEntryHashtag {
+  id        String @id @default(cuid())
+  entryId   String @map("entry_id")
+  hashtagId String @map("hashtag_id")
+
+  entry   RssEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  hashtag Hashtag  @relation(fields: [hashtagId], references: [id], onDelete: Cascade)
+
+  @@unique([entryId, hashtagId])
+  @@map("rss_entry_hashtags")
+}
+
+model RssFetchLog {
+  id            String    @id @default(cuid())
+  sourceId      String    @map("source_id")
+  startedAt     DateTime  @map("started_at")
+  finishedAt    DateTime? @map("finished_at")
+  httpStatus    Int?      @map("http_status")
+  fetchedCount  Int       @default(0) @map("fetched_count")
+  insertedCount Int       @default(0) @map("inserted_count")
+  updatedCount  Int       @default(0) @map("updated_count")
+  durationMs    Int?      @map("duration_ms")
+  errorMessage  String?   @map("error_message") @db.Text
+
+  source RssSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@index([sourceId])
+  @@index([startedAt])
+  @@map("rss_fetch_logs")
+}
+
+model SourceTechnology {
+  id           String   @id @default(cuid())
+  sourceId     String   @map("source_id")
+  technologyId String   @map("technology_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  source     RssSource  @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  technology Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceId, technologyId])
+  @@map("source_technologies")
+}
+
+// ============================================================================
+// Feed Management
+// ============================================================================
+
+enum FeedItemType {
+  RSS_ENTRY
+  POST
+}
+
+model FeedItem {
+  id           String       @id @default(cuid())
+  type         FeedItemType
+  rssEntryId   String?      @map("rss_entry_id")
+  postId       String?      @map("post_id")
+  isPublished  Boolean      @default(true) @map("is_published")
+  rankScore    Float        @default(0.0) @map("rank_score")
+  publishedAt  DateTime     @map("published_at")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  rssEntry RssEntry? @relation(fields: [rssEntryId], references: [id], onDelete: Cascade)
+  post     Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([isPublished, publishedAt])
+  @@index([rankScore])
+  @@map("feed_items")
+}
