@@ -8,9 +8,14 @@
 		"start": "next start",
 		"lint": "biome lint --write src/",
 		"format": "biome format --write ./src/**/*.{js,ts,jsx,tsx}",
-		"storybook": "storybook dev -p 6006"
+		"storybook": "storybook dev -p 6006",
+		"db:seed": "tsx prisma/seed.ts",
+		"db:studio": "DATABASE_URL=\"postgresql://user:password@localhost:5432/techtok-db\" prisma studio",
+		"db:push": "prisma db push",
+		"db:reset": "prisma migrate reset --force && npm run db:seed"
 	},
 	"dependencies": {
+		"@auth/prisma-adapter": "^2.10.0",
 		"@prisma/client": "6.14.0",
 		"@prisma/extension-accelerate": "2.0.2",
 		"@radix-ui/react-dialog": "1.1.14",
@@ -41,5 +46,8 @@
 		"tsx": "4.20.4",
 		"tw-animate-css": "1.3.6",
 		"typescript": "5.9.2"
+	},
+	"prisma": {
+		"seed": "tsx prisma/seed.ts"
 	}
 }
