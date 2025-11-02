@@ -23,5 +23,5 @@
     "[yaml]": {
         "editor.defaultFormatter": "vscode.json-language-features"
     },
-    "kiroAgent.configureMCP": "Disabled"
+    "kiroAgent.configureMCP": "Enabled"
 }

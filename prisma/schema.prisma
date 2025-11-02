@@ -20,7 +20,7 @@ model User {
   displayName   String?   @map("display_name")
   name          String?   // Auth.js standard field
   email         String?   @unique // Auth.js standard field
-  emailVerified DateTime? @map("email_verified") // Auth.js standard field
+  emailVerified Boolean   @default(false) @map("email_verified") // Better Auth用
   image         String?   // Auth.js standard field (avatar_url equivalent)
   bio           String?
   createdAt     DateTime  @default(now()) @map("created_at")
@@ -48,24 +48,38 @@ model User {
 model Account {
   id                String  @id @default(cuid())
   userId            String  @map("user_id")
-  type              String
-  provider          String
-  providerAccountId String  @map("provider_account_id")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
+  accountId         String  @map("account_id")
+  providerId        String  @map("provider_id")
+  accessToken       String? @map("access_token") @db.Text
+  refreshToken      String? @map("refresh_token") @db.Text
+  idToken           String? @map("id_token") @db.Text
+  accessTokenExpiresAt DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
   scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+  password          String?
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+  @@unique([providerId, accountId])
   @@map("accounts")
 }
 
 
+
+model Session {
+  id           String   @id @default(cuid())
+  token        String   @unique
+  userId       String   @map("user_id")
+  expiresAt    DateTime @map("expires_at")
+  ipAddress    String?  @map("ip_address")
+  userAgent    String?  @map("user_agent")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("sessions")
+}
 
 model VerificationToken {
   identifier String
@@ -74,6 +88,17 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verificationtokens")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("verification")
 }
 
 // ============================================================================
@@ -97,8 +122,6 @@ model Post {
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   author   User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  likes    Like[]
-  bookmarks Bookmark[]
   comments Comment[]
   hashtags PostHashtag[]
   shares   PostShare[]
@@ -110,29 +133,29 @@ model Post {
 }
 
 model Like {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id")
-  postId    String   @map("post_id")
-  createdAt DateTime @default(now()) @map("created_at")
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  feedItemId String   @map("feed_item_id")
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  feedItem FeedItem @relation(fields: [feedItemId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, postId])
-  @@index([postId])
+  @@unique([userId, feedItemId])
+  @@index([feedItemId])
   @@map("likes")
 }
 
 model Bookmark {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id")
-  postId    String   @map("post_id")
-  createdAt DateTime @default(now()) @map("created_at")
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  feedItemId String   @map("feed_item_id")
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  feedItem FeedItem @relation(fields: [feedItemId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, postId])
+  @@unique([userId, feedItemId])
   @@index([userId])
   @@map("bookmarks")
 }
@@ -393,8 +416,10 @@ model FeedItem {
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @updatedAt @map("updated_at")
 
-  rssEntry RssEntry? @relation(fields: [rssEntryId], references: [id], onDelete: Cascade)
-  post     Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  rssEntry  RssEntry?  @relation(fields: [rssEntryId], references: [id], onDelete: Cascade)
+  post      Post?      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  likes     Like[]
+  bookmarks Bookmark[]
 
   @@index([isPublished, publishedAt])
   @@index([rankScore])
