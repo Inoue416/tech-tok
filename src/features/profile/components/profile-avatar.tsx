@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface ProfileAvatarProps {
@@ -14,6 +15,13 @@ const sizeVariants = {
 	xl: "size-24",
 };
 
+const sizePixels = {
+	sm: 32,
+	md: 48,
+	lg: 64,
+	xl: 96,
+};
+
 /**
  * プロフィール画像を表示するアバターコンポーネント
  */
@@ -24,6 +32,7 @@ export function ProfileAvatar({
 	className,
 }: ProfileAvatarProps) {
 	const sizeClass = sizeVariants[size];
+	const sizeValue = sizePixels[size];
 
 	return (
 		<div
@@ -34,7 +43,13 @@ export function ProfileAvatar({
 			)}
 		>
 			{src ? (
-				<img src={src} alt={alt} className="size-full object-cover" />
+				<Image
+					src={src}
+					alt={alt}
+					width={sizeValue}
+					height={sizeValue}
+					className="size-full object-cover"
+				/>
 			) : (
 				<div className="flex items-center justify-center size-full bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm">
 					{alt.charAt(0).toUpperCase()}

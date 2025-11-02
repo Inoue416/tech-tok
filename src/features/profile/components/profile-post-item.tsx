@@ -5,6 +5,7 @@ import {
 	Play,
 	Share2,
 } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type {
@@ -95,10 +96,11 @@ export function ProfilePostItem({
 					)}
 					{post.type === "video" && post.content.thumbnail ? (
 						<>
-							<img
+							<Image
 								src={post.content.thumbnail}
 								alt={post.content.title || "投稿画像"}
-								className="size-full object-cover"
+								fill
+								className="object-cover"
 							/>
 							<div className="absolute inset-0 bg-black/20 flex items-center justify-center">
 								<div className="bg-black/50 rounded-full p-3">

@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import { ProfileStats } from "./profile-stats";
-import type { ProfileStats as ProfileStatsType } from "../types";
 
 const meta: Meta<typeof ProfileStats> = {
 	title: "features/profile/ProfileStats",
@@ -98,7 +97,7 @@ export const FormatComparison: Story = {
 					}}
 				/>
 			</div>
-			
+
 			<div className="text-center">
 				<h3 className="text-lg font-semibold mb-4">K表示</h3>
 				<ProfileStats

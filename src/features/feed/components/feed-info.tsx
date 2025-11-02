@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { FeedItemData } from "../types";
 
 interface FeedInfoProps {
@@ -14,11 +15,11 @@ export function FeedInfo({ data }: FeedInfoProps) {
 			{/* 作者情報 */}
 			<div className="mb-2 flex items-center gap-2">
 				{data.author.avatar && (
-					// FIXME:プリフェッチはパフォーマンスとの兼ね合いがあるため
-					// Imageコンポーネントの利用をどうするかは検討中
-					<img
+					<Image
 						src={data.author.avatar}
 						alt={data.author.name}
+						width={32}
+						height={32}
 						className="h-8 w-8 rounded-full"
 					/>
 				)}

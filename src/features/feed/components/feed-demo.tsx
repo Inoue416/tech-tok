@@ -16,18 +16,6 @@ export function FeedDemo() {
 		console.log(`現在のアイテム: ${index + 1}/${sampleFeedData.length}`);
 	};
 
-	const handleLike = (id: string) => {
-		console.log(`アイテム ${id} にいいねしました`);
-	};
-
-	const handleComment = (id: string) => {
-		console.log(`アイテム ${id} にコメントします`);
-	};
-
-	const handleShare = (id: string) => {
-		console.log(`アイテム ${id} をシェアします`);
-	};
-
 	return (
 		<div className="h-screen w-full">
 			<VerticalScrollFeed

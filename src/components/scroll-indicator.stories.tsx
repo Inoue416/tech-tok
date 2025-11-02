@@ -74,6 +74,7 @@ export const Interactive: Story = {
 						</p>
 						<div className="space-x-4">
 							<button
+								type="button"
 								className="rounded bg-white/20 px-4 py-2 text-white hover:bg-white/30"
 								onClick={() => setCurrent(Math.max(0, current - 1))}
 								disabled={current === 0}
@@ -81,6 +82,7 @@ export const Interactive: Story = {
 								前へ
 							</button>
 							<button
+								type="button"
 								className="rounded bg-white/20 px-4 py-2 text-white hover:bg-white/30"
 								onClick={() => setCurrent(Math.min(total - 1, current + 1))}
 								disabled={current === total - 1}

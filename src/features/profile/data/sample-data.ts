@@ -1,4 +1,8 @@
-import type { ProfilePost, UserProfile } from "@/features/profile/types";
+import type {
+	ProfilePost,
+	Technology,
+	UserProfile,
+} from "@/features/profile/types";
 import { getTechnologyById } from "./technology-options";
 
 /**
@@ -20,7 +24,7 @@ export const sampleProfile: UserProfile = {
 		getTechnologyById("tech-docker"),
 		getTechnologyById("tech-aws"),
 		getTechnologyById("tech-graphql"),
-	].filter(Boolean) as any[],
+	].filter((tech): tech is Technology => tech !== undefined),
 	stats: {
 		followers: 1250,
 		following: 345,
