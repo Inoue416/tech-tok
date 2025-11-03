@@ -1,7 +1,7 @@
 import type { FeedItemData } from "../types";
 
 /**
- * フィード機能のサンプルデータ
+ * フィード機能のサンプルデータ（Storybook用）
  */
 export const sampleFeedData: FeedItemData[] = [
 	{

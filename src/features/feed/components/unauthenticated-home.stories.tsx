@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { sampleFeedData } from "../data/sample-data";
+import { sampleFeedData } from "../mocks/sample-data";
 import { UnauthenticatedHome } from "./unauthenticated-home";
 
 const meta: Meta<typeof UnauthenticatedHome> = {
