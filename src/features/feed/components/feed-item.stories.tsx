@@ -52,7 +52,8 @@ const textFeedData: FeedItemData = {
 	author: {
 		id: "author-1",
 		name: "Tech Writer",
-		avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
+		avatar:
+			"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
 	},
 	stats: {
 		likes: 1200,
@@ -73,7 +74,8 @@ const videoFeedData: FeedItemData = {
 	author: {
 		id: "author-2",
 		name: "Code Instructor",
-		avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
+		avatar:
+			"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
 	},
 	stats: {
 		likes: 2500,
@@ -160,9 +162,18 @@ export const LongContentFeedItem: Story = {
 			content: {
 				title: "フルスタック開発の完全ガイド",
 				text: "現代のWeb開発では、フロントエンドとバックエンドの境界が曖昧になっています。Next.jsやRemix、SvelteKitなどのフルスタックフレームワークの登場により、開発者は一つの技術スタックで完全なWebアプリケーションを構築できるようになりました。",
-				description: "フルスタック開発に必要な技術スタックとベストプラクティスについて詳しく解説します。React、TypeScript、Node.js、データベース設計まで幅広くカバーしています。",
+				description:
+					"フルスタック開発に必要な技術スタックとベストプラクティスについて詳しく解説します。React、TypeScript、Node.js、データベース設計まで幅広くカバーしています。",
 			},
-			hashtags: ["フルスタック", "React", "TypeScript", "Next.js", "Node.js", "データベース", "Web開発"],
+			hashtags: [
+				"フルスタック",
+				"React",
+				"TypeScript",
+				"Next.js",
+				"Node.js",
+				"データベース",
+				"Web開発",
+			],
 		},
 		isActive: true,
 	},

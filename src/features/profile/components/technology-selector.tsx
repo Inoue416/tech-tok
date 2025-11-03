@@ -1,168 +1,274 @@
-import { Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-	availableTechnologies,
-	searchTechnologies,
-} from "@/features/profile/data/technology-options";
-import type { Technology } from "@/features/profile/types";
-import { TechnologyTag } from "./technology-tag";
+"use client";
 
-interface TechnologySelectorProps {
-	selectedTechnologies: Technology[];
-	onTechnologiesChange: (technologies: Technology[]) => void;
-	maxSelections?: number;
-}
+import { Check, Search, X } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import type { TechnologySelectorProps } from "@/features/profile/types";
+import { cn } from "@/lib/utils";
 
 /**
- * 技術スタック選択コンポーネント
+ * 技術スタックを選択するUIコンポーネント
  */
 export function TechnologySelector({
+	availableTechnologies,
 	selectedTechnologies,
-	onTechnologiesChange,
-	maxSelections = 10,
+	onSelectionChange,
+	maxSelections,
 }: TechnologySelectorProps) {
 	const [searchQuery, setSearchQuery] = useState("");
-	const [showSuggestions, setShowSuggestions] = useState(false);
+	const [localSelected, setLocalSelected] = useState(selectedTechnologies);
 
-	// 検索結果を取得
-	const searchResults = useMemo(() => {
-		if (!searchQuery.trim()) {
-			return availableTechnologies.slice(0, 20); // 最初の20件を表示
+	// 検索フィルター
+	const filteredTechnologies = availableTechnologies.filter((tech) =>
+		tech.name.toLowerCase().includes(searchQuery.toLowerCase()),
+	);
+
+	// 技術の選択/解除
+	const toggleTechnology = (techId: string) => {
+		const isSelected = localSelected.some((t) => t.id === techId);
+
+		let newSelected: typeof localSelected;
+		if (isSelected) {
+			// 解除
+			newSelected = localSelected.filter((t) => t.id !== techId);
+		} else {
+			// 選択
+			if (maxSelections && localSelected.length >= maxSelections) {
+				return; // 最大選択数に達している
+			}
+			const tech = availableTechnologies.find((t) => t.id === techId);
+			if (tech) {
+				newSelected = [...localSelected, tech];
+			} else {
+				return;
+			}
 		}
-		return searchTechnologies(searchQuery);
-	}, [searchQuery]);
-
-	// 選択済みの技術スタックを除外
-	const availableOptions = useMemo(() => {
-		const selectedIds = new Set(selectedTechnologies.map((tech) => tech.id));
-		return searchResults.filter((tech) => !selectedIds.has(tech.id));
-	}, [searchResults, selectedTechnologies]);
-
-	const handleTechnologyAdd = (technology: Technology) => {
-		if (selectedTechnologies.length >= maxSelections) {
-			return;
-		}
-		onTechnologiesChange([...selectedTechnologies, technology]);
-		setSearchQuery("");
-		setShowSuggestions(false);
+		setLocalSelected(newSelected);
+		onSelectionChange(newSelected);
 	};
 
-	const handleTechnologyRemove = (techId: string) => {
-		onTechnologiesChange(
-			selectedTechnologies.filter((tech) => tech.id !== techId),
-		);
+	// 選択をクリア
+	const clearSelection = () => {
+		setLocalSelected([]);
+		onSelectionChange([]);
 	};
 
-	const handleInputFocus = () => {
-		setShowSuggestions(true);
-	};
-
-	const handleInputBlur = () => {
-		// 少し遅延させてクリックイベントを処理できるようにする
-		setTimeout(() => setShowSuggestions(false), 200);
-	};
+	const isMaxReached = maxSelections
+		? localSelected.length >= maxSelections
+		: false;
 
 	return (
-		<div className="space-y-3">
-			<Label>技術スタック</Label>
-
-			{/* 選択済み技術タグ */}
-			{selectedTechnologies.length > 0 && (
-				<div className="flex flex-wrap gap-2">
-					{selectedTechnologies.map((tech) => (
-						<div key={tech.id} className="relative group">
-							<TechnologyTag technology={tech} size="sm" />
-							<Button
-								size="icon"
-								variant="destructive"
-								className="absolute -top-2 -right-2 size-5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-								onClick={() => handleTechnologyRemove(tech.id)}
-							>
-								<X className="size-3" />
-							</Button>
-						</div>
-					))}
-				</div>
-			)}
-
-			{/* 検索・追加エリア */}
+		<div className="space-y-4">
+			{/* 検索バー */}
 			<div className="relative">
-				<div className="relative">
-					<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 size-4 text-muted-foreground" />
-					<Input
-						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
-						onFocus={handleInputFocus}
-						onBlur={handleInputBlur}
-						placeholder="技術スタックを検索..."
-						className="pl-10"
-						disabled={selectedTechnologies.length >= maxSelections}
-					/>
-				</div>
+				<Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+				<Input
+					type="text"
+					placeholder="技術を検索..."
+					value={searchQuery}
+					onChange={(e) => setSearchQuery(e.target.value)}
+					className="pl-9"
+				/>
+			</div>
 
-				{/* 選択肢のドロップダウン */}
-				{showSuggestions && availableOptions.length > 0 && (
-					<div className="absolute top-full left-0 right-0 z-10 mt-1 bg-background border rounded-md shadow-lg max-h-60 overflow-y-auto">
-						{availableOptions.map((tech) => (
+			{/* 選択済み技術 */}
+			{localSelected.length > 0 && (
+				<div className="space-y-2">
+					<div className="flex items-center justify-between">
+						<p className="text-sm font-medium">
+							選択済み ({localSelected.length}
+							{maxSelections && ` / ${maxSelections}`})
+						</p>
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={clearSelection}
+							className="h-auto p-1 text-xs"
+						>
+							すべてクリア
+						</Button>
+					</div>
+					<div className="flex flex-wrap gap-2">
+						{localSelected.map((tech) => (
 							<button
 								key={tech.id}
 								type="button"
-								className="w-full px-4 py-2 text-left hover:bg-accent hover:text-accent-foreground flex items-center gap-2 transition-colors"
-								onClick={() => handleTechnologyAdd(tech)}
+								onClick={() => toggleTechnology(tech.id)}
+								className={cn(
+									"inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium transition-colors",
+									"bg-primary text-primary-foreground hover:bg-primary/90",
+								)}
+								style={
+									tech.color
+										? {
+												backgroundColor: tech.color,
+												color: "white",
+											}
+										: undefined
+								}
 							>
-								<TechnologyTag technology={tech} size="sm" />
+								{tech.name}
+								<X className="size-3" />
 							</button>
 						))}
 					</div>
-				)}
-			</div>
-
-			{/* 選択数の表示 */}
-			<div className="text-xs text-muted-foreground">
-				{selectedTechnologies.length} / {maxSelections} 選択中
-				{selectedTechnologies.length >= maxSelections && (
-					<span className="text-destructive ml-2">
-						最大選択数に達しています
-					</span>
-				)}
-			</div>
-
-			{/* カテゴリ別クイック選択（人気の技術） */}
-			{!searchQuery && selectedTechnologies.length < maxSelections && (
-				<div className="space-y-2">
-					<Label className="text-xs">人気の技術</Label>
-					<div className="flex flex-wrap gap-2">
-						{availableTechnologies
-							.filter(
-								(tech) =>
-									[
-										"tech-js",
-										"tech-ts",
-										"tech-react",
-										"tech-nextjs",
-										"tech-nodejs",
-										"tech-python",
-									].includes(tech.id) &&
-									!selectedTechnologies.some(
-										(selected) => selected.id === tech.id,
-									),
-							)
-							.map((tech) => (
-								<button
-									key={tech.id}
-									type="button"
-									onClick={() => handleTechnologyAdd(tech)}
-									className="transition-transform hover:scale-105"
-								>
-									<TechnologyTag technology={tech} size="sm" />
-								</button>
-							))}
-					</div>
 				</div>
 			)}
+
+			{/* 利用可能な技術一覧 */}
+			<div className="space-y-2">
+				<p className="text-sm font-medium">利用可能な技術</p>
+				<div className="max-h-[300px] overflow-y-auto border rounded-md p-2">
+					{filteredTechnologies.length > 0 ? (
+						<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+							{filteredTechnologies.map((tech) => {
+								const isSelected = localSelected.some((t) => t.id === tech.id);
+								const isDisabled = !isSelected && isMaxReached;
+
+								return (
+									<button
+										key={tech.id}
+										type="button"
+										onClick={() => toggleTechnology(tech.id)}
+										disabled={isDisabled}
+										className={cn(
+											"relative flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors text-left",
+											isSelected
+												? "bg-primary/10 text-primary border border-primary/20"
+												: "bg-muted hover:bg-muted/80 border border-transparent",
+											isDisabled && "opacity-50 cursor-not-allowed",
+										)}
+										style={
+											isSelected && tech.color
+												? {
+														backgroundColor: `${tech.color}20`,
+														color: tech.color,
+														borderColor: `${tech.color}40`,
+													}
+												: undefined
+										}
+									>
+										<span className="truncate">{tech.name}</span>
+										{isSelected && <Check className="size-4 shrink-0" />}
+									</button>
+								);
+							})}
+						</div>
+					) : (
+						<p className="text-sm text-muted-foreground text-center py-8">
+							検索結果が見つかりませんでした
+						</p>
+					)}
+				</div>
+			</div>
+
+			{maxSelections && isMaxReached && (
+				<p className="text-sm text-muted-foreground text-center">
+					最大{maxSelections}個まで選択できます
+				</p>
+			)}
 		</div>
+	);
+}
+
+/**
+ * ダイアログ形式の技術スタック選択UI
+ */
+export function TechnologySelectorDialog({
+	open,
+	onOpenChange,
+	availableTechnologies,
+	selectedTechnologies,
+	onSave,
+	maxSelections,
+}: {
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+	availableTechnologies: TechnologySelectorProps["availableTechnologies"];
+	selectedTechnologies: TechnologySelectorProps["selectedTechnologies"];
+	onSave: (
+		technologies: TechnologySelectorProps["selectedTechnologies"],
+	) => Promise<void>;
+	maxSelections?: number;
+}) {
+	const [localSelected, setLocalSelected] = useState(selectedTechnologies);
+	const [error, setError] = useState<string | null>(null);
+	const [isLoading, setIsLoading] = useState(false);
+
+	// ダイアログが開かれたときに選択状態をリセット
+	const handleOpenChange = (newOpen: boolean) => {
+		if (newOpen) {
+			setLocalSelected(selectedTechnologies);
+			setError(null);
+		}
+		onOpenChange(newOpen);
+	};
+
+	// 保存処理
+	const handleSave = async () => {
+		setIsLoading(true);
+		setError(null);
+
+		try {
+			await onSave(localSelected);
+			onOpenChange(false);
+		} catch (err) {
+			setError(
+				err instanceof Error ? err.message : "技術スタックの更新に失敗しました",
+			);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	return (
+		<Dialog open={open} onOpenChange={handleOpenChange}>
+			<DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+				<DialogHeader>
+					<DialogTitle>技術スタックを編集</DialogTitle>
+					<DialogDescription>
+						興味のある技術を選択してください
+						{maxSelections && `（最大${maxSelections}個）`}
+					</DialogDescription>
+				</DialogHeader>
+
+				<div className="flex-1 overflow-y-auto py-4">
+					<TechnologySelector
+						availableTechnologies={availableTechnologies}
+						selectedTechnologies={localSelected}
+						onSelectionChange={setLocalSelected}
+						maxSelections={maxSelections}
+					/>
+				</div>
+
+				{error && (
+					<p className="text-sm text-destructive text-center" role="alert">
+						{error}
+					</p>
+				)}
+
+				<DialogFooter>
+					<Button
+						variant="outline"
+						onClick={() => onOpenChange(false)}
+						disabled={isLoading}
+					>
+						キャンセル
+					</Button>
+					<Button onClick={handleSave} disabled={isLoading}>
+						{isLoading ? "保存中..." : "保存"}
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 	);
 }

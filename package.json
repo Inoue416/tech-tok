@@ -7,7 +7,7 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "biome lint --write src/",
-		"format": "biome format --write ./src/**/*.{js,ts,jsx,tsx}",
+		"format": "biome format --write src",
 		"storybook": "storybook dev -p 6006",
 		"db:seed": "tsx prisma/seed.ts",
 		"db:studio": "DATABASE_URL=\"postgresql://user:password@localhost:5432/techtok-db\" prisma studio",

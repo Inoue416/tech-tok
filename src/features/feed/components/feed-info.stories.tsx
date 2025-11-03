@@ -27,12 +27,14 @@ const basicFeedData: FeedItemData = {
 	type: "text",
 	content: {
 		title: "React Server Components",
-		description: "Next.js 13のApp Routerで導入された React Server Components について詳しく解説します。パフォーマンスの向上と開発者体験の改善を両立する新しいアプローチです。",
+		description:
+			"Next.js 13のApp Routerで導入された React Server Components について詳しく解説します。パフォーマンスの向上と開発者体験の改善を両立する新しいアプローチです。",
 	},
 	author: {
 		id: "author-1",
 		name: "田中太郎",
-		avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
+		avatar:
+			"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
 	},
 	stats: {
 		likes: 1234,
@@ -126,9 +128,19 @@ export const LongContent: Story = {
 			},
 			content: {
 				...basicFeedData.content,
-				description: "これは非常に長い説明文の例です。フィード内でのテキストの折り返しや表示がどのように処理されるかを確認するために使用します。React Server Componentsは、従来のクライアントサイドレンダリングとサーバーサイドレンダリングの利点を組み合わせた画期的な技術です。この技術により、パフォーマンスの向上とともに開発者体験も大幅に改善されます。",
+				description:
+					"これは非常に長い説明文の例です。フィード内でのテキストの折り返しや表示がどのように処理されるかを確認するために使用します。React Server Componentsは、従来のクライアントサイドレンダリングとサーバーサイドレンダリングの利点を組み合わせた画期的な技術です。この技術により、パフォーマンスの向上とともに開発者体験も大幅に改善されます。",
 			},
-			hashtags: ["React", "Next.js", "ServerComponents", "JavaScript", "TypeScript", "Web開発", "フロントエンド", "パフォーマンス"],
+			hashtags: [
+				"React",
+				"Next.js",
+				"ServerComponents",
+				"JavaScript",
+				"TypeScript",
+				"Web開発",
+				"フロントエンド",
+				"パフォーマンス",
+			],
 		},
 	},
 	render: (args) => (
