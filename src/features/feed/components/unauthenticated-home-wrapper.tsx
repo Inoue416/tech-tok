@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { MobileHeader } from "@/components/layout/mobile-header";
 import type { FeedItemData } from "@/features/feed/types";
 import { PreviewErrorState } from "./preview-error-state";
 import { UnauthenticatedHome } from "./unauthenticated-home";
@@ -51,25 +52,42 @@ export function UnauthenticatedHomeWrapper({
 	// エラー状態の場合
 	if (error) {
 		return (
-			<PreviewErrorState
-				message={error}
-				onRetry={handleRetry}
-				showLoginPrompt={true}
-			/>
+			<>
+				<MobileHeader />
+				<div className="pt-16 md:pt-0">
+					<PreviewErrorState
+						message={error}
+						onRetry={handleRetry}
+						showLoginPrompt={true}
+					/>
+				</div>
+			</>
 		);
 	}
 
 	// 記事が空の場合もエラーとして扱う
 	if (!articles || articles.length === 0) {
 		return (
-			<PreviewErrorState
-				message="表示できる記事がありません"
-				onRetry={handleRetry}
-				showLoginPrompt={true}
-			/>
+			<>
+				<MobileHeader />
+				<div className="pt-16 md:pt-0">
+					<PreviewErrorState
+						message="表示できる記事がありません"
+						onRetry={handleRetry}
+						showLoginPrompt={true}
+					/>
+				</div>
+			</>
 		);
 	}
 
 	// 正常な場合は未認証ホームを表示
-	return <UnauthenticatedHome articles={articles} />;
+	return (
+		<>
+			<MobileHeader />
+			<div className="pt-16 md:pt-0">
+				<UnauthenticatedHome articles={articles} />
+			</div>
+		</>
+	);
 }

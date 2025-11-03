@@ -3,6 +3,7 @@
 import { Bookmark, Home, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
+import { AppLogo } from "@/components/ui/app-logo";
 import { cn } from "@/lib/utils";
 import { NavigationItem } from "./navigation-item";
 
@@ -48,6 +49,9 @@ export function SidebarNavigation({ className }: SidebarNavigationProps) {
 			)}
 			aria-label="メインナビゲーション"
 		>
+			<div className="px-2 py-4 border-b border-border">
+				<AppLogo size="medium" showText />
+			</div>
 			<div className="flex flex-col gap-1 mt-4">
 				{items.map((item) => (
 					<NavigationItem key={item.href} {...item} variant="sidebar" />

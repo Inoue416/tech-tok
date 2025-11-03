@@ -2,6 +2,7 @@
 
 import { useSession } from "@/lib/auth-client";
 import { BottomNavigation } from "./bottom-navigation";
+import { MobileHeader } from "./mobile-header";
 import { SidebarNavigation } from "./sidebar-navigation";
 
 interface MainNavigationProps {
@@ -18,6 +19,7 @@ export function MainNavigation({ className }: MainNavigationProps) {
 
 	return (
 		<>
+			<MobileHeader className={className} />
 			<SidebarNavigation className={className} />
 			<BottomNavigation className={className} />
 		</>
