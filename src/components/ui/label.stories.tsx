@@ -73,6 +73,7 @@ export const Required: Story = {
  */
 export const LongText: Story = {
 	args: {
-		children: "このラベルは非常に長いテキストを含んでいる例です。フォームの項目説明として使用されます。",
+		children:
+			"このラベルは非常に長いテキストを含んでいる例です。フォームの項目説明として使用されます。",
 	},
 };

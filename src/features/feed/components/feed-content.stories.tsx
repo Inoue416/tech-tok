@@ -32,7 +32,8 @@ const textFeedData: FeedItemData = {
 	author: {
 		id: "author-1",
 		name: "Tech Writer",
-		avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
+		avatar:
+			"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
 	},
 	stats: {
 		likes: 1200,
@@ -52,7 +53,8 @@ const videoFeedData: FeedItemData = {
 	author: {
 		id: "author-2",
 		name: "Code Instructor",
-		avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
+		avatar:
+			"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
 	},
 	stats: {
 		likes: 2500,

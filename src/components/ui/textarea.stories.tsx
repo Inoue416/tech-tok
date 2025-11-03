@@ -68,7 +68,8 @@ export const WithValue: Story = {
  */
 export const LongText: Story = {
 	args: {
-		defaultValue: "これは非常に長いテキストの例です。\nユーザーが技術記事や説明を書く際に使用されることを想定しています。\n\nReactやTypeScriptについて学んだことを\nここに記述できます。\n\nコンポーネントの設計や状態管理について\n詳しく説明することも可能です。",
+		defaultValue:
+			"これは非常に長いテキストの例です。\nユーザーが技術記事や説明を書く際に使用されることを想定しています。\n\nReactやTypeScriptについて学んだことを\nここに記述できます。\n\nコンポーネントの設計や状態管理について\n詳しく説明することも可能です。",
 		rows: 8,
 	},
 };

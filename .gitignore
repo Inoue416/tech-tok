@@ -48,3 +48,4 @@ docker-psql/data
 .cursor/**
 
 ./vscode
+.docs

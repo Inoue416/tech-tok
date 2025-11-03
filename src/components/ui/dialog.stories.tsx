@@ -126,7 +126,7 @@ export const WithForm: Story = {
 export const Controlled: Story = {
 	render: () => {
 		const [open, setOpen] = useState(false);
-		
+
 		return (
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
