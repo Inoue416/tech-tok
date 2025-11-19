@@ -23,22 +23,7 @@ export default async function Home() {
 
 	// 認証済みユーザーは/feedにリダイレクト
 	if (session?.user) {
-		try {
-			redirect("/feed");
-		} catch (error) {
-			// リダイレクトエラーの処理
-			// Next.jsのredirect()は内部的にエラーをthrowするため、
-			// 通常のリダイレクトとエラーを区別する必要がある
-			console.error("Redirect error:", error);
-
-			// NEXT_REDIRECTエラーは正常なリダイレクトなので再スロー
-			if (error && typeof error === "object" && "digest" in error) {
-				throw error;
-			}
-
-			// その他のエラーはフォールバック処理へ
-			// クライアントサイドでのフォールバックナビゲーションを試みる
-		}
+		redirect("/feed");
 	}
 
 	// プレビュー記事を取得（最初の3記事）

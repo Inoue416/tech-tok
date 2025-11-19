@@ -55,7 +55,14 @@ export function useInfiniteScroll({
 				limit,
 			});
 
-			setArticles((prev) => [...prev, ...result.articles]);
+			// 重複を除外してマージ
+			setArticles((prev) => {
+				const existingIds = new Set(prev.map((article) => article.id));
+				const newArticles = result.articles.filter(
+					(article) => !existingIds.has(article.id),
+				);
+				return [...prev, ...newArticles];
+			});
 			setCursor(result.nextCursor);
 			setHasMore(result.hasMore);
 		} catch (err) {
