@@ -6,14 +6,24 @@ import { getSession } from "@/lib/auth";
  * ログインページ
  * 既にログイン済みの場合はフィードページにリダイレクト
  */
-export default async function LoginPage() {
+export default async function LoginPage({
+	searchParams,
+}: {
+	searchParams: Promise<{ callbackUrl?: string }>;
+}) {
 	// セッションチェック
 	const session = await getSession();
 
-	// 既にログイン済みの場合はフィードページにリダイレクト
+	// searchParamsをawaitで解決
+	const params = await searchParams;
+
+	// callbackUrlを取得（デフォルトは/feed）
+	const callbackUrl = params.callbackUrl || "/feed";
+
+	// 既にログイン済みの場合はcallbackUrlにリダイレクト
 	if (session?.user) {
-		redirect("/feed");
+		redirect(callbackUrl);
 	}
 
-	return <LoginForm callbackUrl="/feed" />;
+	return <LoginForm callbackUrl={callbackUrl} />;
 }

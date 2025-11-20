@@ -1,5 +1,5 @@
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { signIn } from "@/lib/auth-client";
 
 /**
  * 永続的ログインバナーのフックオプション
@@ -21,6 +21,7 @@ export function usePersistentLoginBanner({
 	totalPreview,
 	callbackUrl = "/feed",
 }: UsePersistentLoginBannerOptions) {
+	const router = useRouter();
 	const [isVisible, setIsVisible] = useState(true);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -37,18 +38,11 @@ export function usePersistentLoginBanner({
 	/**
 	 * ログインボタンのクリックハンドラー
 	 */
-	const handleLogin = async () => {
-		try {
-			setIsLoading(true);
-			// デフォルトでGoogleログインを使用
-			await signIn.social({
-				provider: "google",
-				callbackURL: callbackUrl,
-			});
-		} catch (error) {
-			console.error("Login error:", error);
-			setIsLoading(false);
-		}
+	const handleLogin = () => {
+		setIsLoading(true);
+		// コールバックURLをクエリパラメータとして付与してログイン画面に遷移
+		const loginUrl = callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/login";
+		router.push(loginUrl);
 	};
 
 	return {
