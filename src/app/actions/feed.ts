@@ -13,6 +13,38 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 /**
+ * JSTで今日の開始時刻（00:00:00）を取得
+ */
+function getTodayStartJST(): Date {
+	const now = new Date();
+	const jstOffset = 9 * 60; // JST is UTC+9
+	const localOffset = now.getTimezoneOffset();
+	const jstTime = new Date(now.getTime() + (jstOffset + localOffset) * 60000);
+
+	jstTime.setHours(0, 0, 0, 0);
+
+	// Convert back to UTC for database query
+	const utcTime = new Date(jstTime.getTime() - jstOffset * 60000);
+	return utcTime;
+}
+
+/**
+ * JSTで今日の終了時刻（23:59:59.999）を取得
+ */
+function getTodayEndJST(): Date {
+	const now = new Date();
+	const jstOffset = 9 * 60; // JST is UTC+9
+	const localOffset = now.getTimezoneOffset();
+	const jstTime = new Date(now.getTime() + (jstOffset + localOffset) * 60000);
+
+	jstTime.setHours(23, 59, 59, 999);
+
+	// Convert back to UTC for database query
+	const utcTime = new Date(jstTime.getTime() - jstOffset * 60000);
+	return utcTime;
+}
+
+/**
  * フィード取得のパラメータ
  */
 export interface GetFeedArticlesParams {
@@ -44,69 +76,68 @@ export async function getFeedArticles(
 		const session = await getSession();
 		const userId = session?.user?.id;
 
-		// FeedItemを取得（公開済みのもののみ）
+		// FeedItemを取得（公開済みのもののみ、今日のデータのみ）
 		const feedItems = await prisma.feedItem.findMany({
 			where: {
 				isPublished: true,
+				createdAt: {
+					gte: getTodayStartJST(),
+					lte: getTodayEndJST(),
+				},
 				...(cursor && {
 					id: {
 						lt: cursor, // カーソルより前のアイテムを取得
 					},
 				}),
-				// カテゴリーフィルター
-				...(categoryId && {
-					OR: [
-						{
-							rssEntry: {
-								source: {
-									sourceTechnologies: {
-										some: {
-											technologyId: categoryId,
-										},
-									},
-								},
-							},
-						},
-						{
-							post: {
-								hashtags: {
-									some: {
-										hashtagId: categoryId,
-									},
-								},
-							},
-						},
-					],
-				}),
-			},
-			include: {
-				rssEntry: {
-					include: {
-						source: {
-							include: {
-								sourceTechnologies: {
-									include: {
-										technology: true,
-									},
+			// カテゴリーフィルター
+			...(categoryId && {
+				OR: [
+					{
+						rssEntry: {
+							technologies: {
+								some: {
+									technologyId: categoryId,
 								},
 							},
 						},
 					},
-				},
-				post: {
-					include: {
-						author: true,
-						hashtags: {
-							include: {
-								hashtag: true,
+					{
+						post: {
+							hashtags: {
+								some: {
+									hashtagId: categoryId,
+								},
 							},
+						},
+					},
+				],
+			}),
+		},
+		include: {
+			rssEntry: {
+				include: {
+					source: true,
+					technologies: {
+						include: {
+							technology: true,
 						},
 					},
 				},
 			},
-			orderBy: {
-				publishedAt: "desc",
+			post: {
+				include: {
+					author: true,
+					hashtags: {
+						include: {
+							hashtag: true,
+						},
+					},
+				},
 			},
+		},
+		orderBy: {
+			publishedAt: "desc",
+		},
 			take: limit + 1, // 次のページがあるか確認するため+1
 		});
 
@@ -187,13 +218,10 @@ export async function getArticleById(id: string): Promise<Article | null> {
 			include: {
 				rssEntry: {
 					include: {
-						source: {
+						source: true,
+						technologies: {
 							include: {
-								sourceTechnologies: {
-									include: {
-										technology: true,
-									},
-								},
+								technology: true,
 							},
 						},
 					},

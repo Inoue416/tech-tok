@@ -12,16 +12,14 @@ interface MainNavigationProps {
 export function MainNavigation({ className }: MainNavigationProps) {
 	const { data: session } = useSession();
 
-	// セッションがない場合は何も表示しない
-	if (!session) {
-		return null;
-	}
+	// ログイン状態に応じてナビゲーションを表示
+	const isAuthenticated = !!session?.user;
 
 	return (
 		<>
-			<MobileHeader className={className} />
-			<SidebarNavigation className={className} />
-			<BottomNavigation className={className} />
+			{isAuthenticated && <MobileHeader className={className} />}
+			<SidebarNavigation className={className} isAuthenticated={isAuthenticated} />
+			{isAuthenticated && <BottomNavigation className={className} isAuthenticated={isAuthenticated} />}
 		</>
 	);
 }
