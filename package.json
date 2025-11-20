@@ -10,9 +10,10 @@
 		"format": "biome format --write src",
 		"storybook": "storybook dev -p 6006",
 		"db:seed": "tsx prisma/seed.ts",
+		"db:seed-tech": "tsx scripts/seed-technologies.ts",
 		"db:studio": "DATABASE_URL=\"postgresql://user:password@localhost:5432/techtok-db\" prisma studio",
 		"db:push": "prisma db push",
-		"db:reset": "prisma migrate reset --force && npm run db:seed"
+		"db:reset": "prisma migrate reset --force && pnpm db:seed"
 	},
 	"dependencies": {
 		"@prisma/client": "6.14.0",

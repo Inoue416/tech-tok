@@ -32,7 +32,36 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const Authenticated: Story = {
+	args: {
+		isAuthenticated: true,
+	},
+	parameters: {
+		nextjs: {
+			navigation: {
+				pathname: "/feed",
+			},
+		},
+	},
+};
+
+export const Unauthenticated: Story = {
+	args: {
+		isAuthenticated: false,
+	},
+	parameters: {
+		nextjs: {
+			navigation: {
+				pathname: "/",
+			},
+		},
+	},
+};
+
 export const FeedActive: Story = {
+	args: {
+		isAuthenticated: true,
+	},
 	parameters: {
 		nextjs: {
 			navigation: {
@@ -43,6 +72,9 @@ export const FeedActive: Story = {
 };
 
 export const BookmarksActive: Story = {
+	args: {
+		isAuthenticated: true,
+	},
 	parameters: {
 		nextjs: {
 			navigation: {
@@ -53,6 +85,9 @@ export const BookmarksActive: Story = {
 };
 
 export const ProfileActive: Story = {
+	args: {
+		isAuthenticated: true,
+	},
 	parameters: {
 		nextjs: {
 			navigation: {
@@ -63,6 +98,9 @@ export const ProfileActive: Story = {
 };
 
 export const HomeActive: Story = {
+	args: {
+		isAuthenticated: true,
+	},
 	parameters: {
 		nextjs: {
 			navigation: {
@@ -73,6 +111,9 @@ export const HomeActive: Story = {
 };
 
 export const DesktopView: Story = {
+	args: {
+		isAuthenticated: true,
+	},
 	parameters: {
 		viewport: {
 			defaultViewport: "desktop",

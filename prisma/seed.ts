@@ -14,10 +14,10 @@ async function main() {
 	console.log("🧹 既存データの削除...");
 	await prisma.feedItem.deleteMany();
 	await prisma.rssEntryHashtag.deleteMany();
+	await prisma.rssEntryTechnology.deleteMany();
 	await prisma.rssEnclosure.deleteMany();
 	await prisma.rssEntry.deleteMany();
 	await prisma.rssFetchLog.deleteMany();
-	await prisma.sourceTechnology.deleteMany();
 	await prisma.rssSource.deleteMany();
 	await prisma.postHashtag.deleteMany();
 	await prisma.postShare.deleteMany();
@@ -36,42 +36,104 @@ async function main() {
 
 	// 1. Technologyデータ
 	console.log("1️⃣ Technologyデータ作成...");
-	const technologies = await Promise.all([
-		prisma.technology.create({
-			data: { name: "React", category: "Frontend", color: "#61DAFB" },
-		}),
-		prisma.technology.create({
-			data: { name: "Next.js", category: "Framework", color: "#000000" },
-		}),
-		prisma.technology.create({
-			data: { name: "TypeScript", category: "Language", color: "#3178C6" },
-		}),
-		prisma.technology.create({
-			data: { name: "Node.js", category: "Backend", color: "#339933" },
-		}),
-		prisma.technology.create({
-			data: { name: "Python", category: "Language", color: "#3776AB" },
-		}),
-		prisma.technology.create({
-			data: { name: "Go", category: "Language", color: "#00ADD8" },
-		}),
-		prisma.technology.create({
-			data: { name: "Docker", category: "Infrastructure", color: "#2496ED" },
-		}),
-		prisma.technology.create({
-			data: {
-				name: "Kubernetes",
-				category: "Infrastructure",
-				color: "#326CE5",
-			},
-		}),
-		prisma.technology.create({
-			data: { name: "AWS", category: "Cloud", color: "#232F3E" },
-		}),
-		prisma.technology.create({
-			data: { name: "PostgreSQL", category: "Database", color: "#336791" },
-		}),
-	]);
+	const technologiesData = [
+		// フロントエンド
+		{ name: "React", category: "Frontend", color: "#61DAFB" },
+		{ name: "Vue.js", category: "Frontend", color: "#42B883" },
+		{ name: "Angular", category: "Frontend", color: "#DD0031" },
+		{ name: "Svelte", category: "Frontend", color: "#FF3E00" },
+		{ name: "Tailwind CSS", category: "Frontend", color: "#06B6D4" },
+		{ name: "Sass", category: "Frontend", color: "#CC6699" },
+
+		// フレームワーク
+		{ name: "Next.js", category: "Framework", color: "#000000" },
+		{ name: "Nuxt.js", category: "Framework", color: "#00DC82" },
+		{ name: "Remix", category: "Framework", color: "#000000" },
+		{ name: "Astro", category: "Framework", color: "#FF5D01" },
+
+		// プログラミング言語
+		{ name: "TypeScript", category: "Language", color: "#3178C6" },
+		{ name: "JavaScript", category: "Language", color: "#F7DF1E" },
+		{ name: "Python", category: "Language", color: "#3776AB" },
+		{ name: "Go", category: "Language", color: "#00ADD8" },
+		{ name: "Rust", category: "Language", color: "#000000" },
+		{ name: "Java", category: "Language", color: "#007396" },
+		{ name: "C#", category: "Language", color: "#239120" },
+		{ name: "PHP", category: "Language", color: "#777BB4" },
+		{ name: "Ruby", category: "Language", color: "#CC342D" },
+		{ name: "Swift", category: "Language", color: "#FA7343" },
+		{ name: "Kotlin", category: "Language", color: "#7F52FF" },
+
+		// バックエンド
+		{ name: "Node.js", category: "Backend", color: "#339933" },
+		{ name: "Express", category: "Backend", color: "#000000" },
+		{ name: "NestJS", category: "Backend", color: "#E0234E" },
+		{ name: "Django", category: "Backend", color: "#092E20" },
+		{ name: "FastAPI", category: "Backend", color: "#009688" },
+		{ name: "Flask", category: "Backend", color: "#000000" },
+		{ name: "Spring Boot", category: "Backend", color: "#6DB33F" },
+		{ name: "Laravel", category: "Backend", color: "#FF2D20" },
+		{ name: "Ruby on Rails", category: "Backend", color: "#CC0000" },
+
+		// データベース
+		{ name: "PostgreSQL", category: "Database", color: "#336791" },
+		{ name: "MySQL", category: "Database", color: "#4479A1" },
+		{ name: "MongoDB", category: "Database", color: "#47A248" },
+		{ name: "Redis", category: "Database", color: "#DC382D" },
+		{ name: "Supabase", category: "Database", color: "#3ECF8E" },
+		{ name: "Firebase", category: "Database", color: "#FFCA28" },
+		{ name: "Prisma", category: "Database", color: "#2D3748" },
+
+		// クラウド・インフラ
+		{ name: "AWS", category: "Cloud", color: "#232F3E" },
+		{ name: "GCP", category: "Cloud", color: "#4285F4" },
+		{ name: "Azure", category: "Cloud", color: "#0078D4" },
+		{ name: "Vercel", category: "Cloud", color: "#000000" },
+		{ name: "Netlify", category: "Cloud", color: "#00C7B7" },
+		{ name: "Cloudflare", category: "Cloud", color: "#F38020" },
+
+		// DevOps・インフラ
+		{ name: "Docker", category: "Infrastructure", color: "#2496ED" },
+		{ name: "Kubernetes", category: "Infrastructure", color: "#326CE5" },
+		{ name: "Terraform", category: "Infrastructure", color: "#7B42BC" },
+		{ name: "GitHub Actions", category: "Infrastructure", color: "#2088FF" },
+		{ name: "Jenkins", category: "Infrastructure", color: "#D24939" },
+		{ name: "GitLab CI", category: "Infrastructure", color: "#FC6D26" },
+
+		// モバイル
+		{ name: "React Native", category: "Mobile", color: "#61DAFB" },
+		{ name: "Flutter", category: "Mobile", color: "#02569B" },
+		{ name: "Expo", category: "Mobile", color: "#000020" },
+
+		// ツール・その他
+		{ name: "Git", category: "Tools", color: "#F05032" },
+		{ name: "GitHub", category: "Tools", color: "#181717" },
+		{ name: "VS Code", category: "Tools", color: "#007ACC" },
+		{ name: "Webpack", category: "Tools", color: "#8DD6F9" },
+		{ name: "Vite", category: "Tools", color: "#646CFF" },
+		{ name: "ESLint", category: "Tools", color: "#4B32C3" },
+		{ name: "Prettier", category: "Tools", color: "#F7B93E" },
+
+		// テスト
+		{ name: "Jest", category: "Testing", color: "#C21325" },
+		{ name: "Vitest", category: "Testing", color: "#6E9F18" },
+		{ name: "Cypress", category: "Testing", color: "#17202C" },
+		{ name: "Playwright", category: "Testing", color: "#2EAD33" },
+
+		// AI・機械学習
+		{ name: "TensorFlow", category: "AI/ML", color: "#FF6F00" },
+		{ name: "PyTorch", category: "AI/ML", color: "#EE4C2C" },
+		{ name: "OpenAI", category: "AI/ML", color: "#412991" },
+		{ name: "LangChain", category: "AI/ML", color: "#1C3C3C" },
+	];
+
+	const technologies = await Promise.all(
+		technologiesData.map((tech) =>
+			prisma.technology.create({
+				data: tech,
+			}),
+		),
+	);
 	console.log(`✅ ${technologies.length}個のTechnologyを作成\n`);
 
 	// 2. Hashtagデータ
@@ -153,72 +215,91 @@ async function main() {
 
 	// 4. UserTechnology関連付け
 	console.log("4️⃣ UserTechnology関連付け...");
+	// 技術名でIDを取得するヘルパー関数
+	const getTechId = (name: string) => {
+		const tech = technologies.find((t) => t.name === name);
+		if (!tech) throw new Error(`Technology not found: ${name}`);
+		return tech.id;
+	};
+
 	const userTechnologies = await Promise.all([
-		// Alice: React, TypeScript, Next.js
+		// Alice: React, TypeScript, Next.js, Tailwind CSS
 		prisma.userTechnology.create({
-			data: { userId: users[0].id, technologyId: technologies[0].id },
+			data: { userId: users[0].id, technologyId: getTechId("React") },
 		}),
 		prisma.userTechnology.create({
-			data: { userId: users[0].id, technologyId: technologies[1].id },
+			data: { userId: users[0].id, technologyId: getTechId("TypeScript") },
 		}),
 		prisma.userTechnology.create({
-			data: { userId: users[0].id, technologyId: technologies[2].id },
+			data: { userId: users[0].id, technologyId: getTechId("Next.js") },
+		}),
+		prisma.userTechnology.create({
+			data: { userId: users[0].id, technologyId: getTechId("Tailwind CSS") },
 		}),
 
 		// Bob: Node.js, Python, Go, AWS, PostgreSQL
 		prisma.userTechnology.create({
-			data: { userId: users[1].id, technologyId: technologies[3].id },
+			data: { userId: users[1].id, technologyId: getTechId("Node.js") },
 		}),
 		prisma.userTechnology.create({
-			data: { userId: users[1].id, technologyId: technologies[4].id },
+			data: { userId: users[1].id, technologyId: getTechId("Python") },
 		}),
 		prisma.userTechnology.create({
-			data: { userId: users[1].id, technologyId: technologies[5].id },
+			data: { userId: users[1].id, technologyId: getTechId("Go") },
 		}),
 		prisma.userTechnology.create({
-			data: { userId: users[1].id, technologyId: technologies[8].id },
+			data: { userId: users[1].id, technologyId: getTechId("AWS") },
 		}),
 		prisma.userTechnology.create({
-			data: { userId: users[1].id, technologyId: technologies[9].id },
-		}),
-
-		// Charlie: React, Next.js, TypeScript, PostgreSQL
-		prisma.userTechnology.create({
-			data: { userId: users[2].id, technologyId: technologies[0].id },
-		}),
-		prisma.userTechnology.create({
-			data: { userId: users[2].id, technologyId: technologies[1].id },
-		}),
-		prisma.userTechnology.create({
-			data: { userId: users[2].id, technologyId: technologies[2].id },
-		}),
-		prisma.userTechnology.create({
-			data: { userId: users[2].id, technologyId: technologies[9].id },
+			data: { userId: users[1].id, technologyId: getTechId("PostgreSQL") },
 		}),
 
-		// Diana: React, TypeScript, Node.js
+		// Charlie: React, Next.js, TypeScript, PostgreSQL, Supabase
 		prisma.userTechnology.create({
-			data: { userId: users[3].id, technologyId: technologies[0].id },
+			data: { userId: users[2].id, technologyId: getTechId("React") },
 		}),
 		prisma.userTechnology.create({
-			data: { userId: users[3].id, technologyId: technologies[2].id },
+			data: { userId: users[2].id, technologyId: getTechId("Next.js") },
 		}),
 		prisma.userTechnology.create({
-			data: { userId: users[3].id, technologyId: technologies[3].id },
+			data: { userId: users[2].id, technologyId: getTechId("TypeScript") },
+		}),
+		prisma.userTechnology.create({
+			data: { userId: users[2].id, technologyId: getTechId("PostgreSQL") },
+		}),
+		prisma.userTechnology.create({
+			data: { userId: users[2].id, technologyId: getTechId("Supabase") },
 		}),
 
-		// Eva: Docker, Kubernetes, AWS, Go
+		// Diana: React Native, TypeScript, Node.js, Flutter
 		prisma.userTechnology.create({
-			data: { userId: users[4].id, technologyId: technologies[6].id },
+			data: { userId: users[3].id, technologyId: getTechId("React Native") },
 		}),
 		prisma.userTechnology.create({
-			data: { userId: users[4].id, technologyId: technologies[7].id },
+			data: { userId: users[3].id, technologyId: getTechId("TypeScript") },
 		}),
 		prisma.userTechnology.create({
-			data: { userId: users[4].id, technologyId: technologies[8].id },
+			data: { userId: users[3].id, technologyId: getTechId("Node.js") },
 		}),
 		prisma.userTechnology.create({
-			data: { userId: users[4].id, technologyId: technologies[5].id },
+			data: { userId: users[3].id, technologyId: getTechId("Flutter") },
+		}),
+
+		// Eva: Docker, Kubernetes, AWS, Go, Terraform
+		prisma.userTechnology.create({
+			data: { userId: users[4].id, technologyId: getTechId("Docker") },
+		}),
+		prisma.userTechnology.create({
+			data: { userId: users[4].id, technologyId: getTechId("Kubernetes") },
+		}),
+		prisma.userTechnology.create({
+			data: { userId: users[4].id, technologyId: getTechId("AWS") },
+		}),
+		prisma.userTechnology.create({
+			data: { userId: users[4].id, technologyId: getTechId("Go") },
+		}),
+		prisma.userTechnology.create({
+			data: { userId: users[4].id, technologyId: getTechId("Terraform") },
 		}),
 	]);
 	console.log(
@@ -322,55 +403,8 @@ async function main() {
 	]);
 	console.log(`✅ ${rssSources.length}個のRSS Sourceを作成\n`);
 
-	// 7. SourceTechnology関連付け
-	console.log("7️⃣ SourceTechnology関連付け...");
-	const sourceTechnologies = await Promise.all([
-		// DEV Community - 複数技術
-		prisma.sourceTechnology.create({
-			data: { sourceId: rssSources[0].id, technologyId: technologies[0].id },
-		}),
-		prisma.sourceTechnology.create({
-			data: { sourceId: rssSources[0].id, technologyId: technologies[2].id },
-		}),
-		prisma.sourceTechnology.create({
-			data: { sourceId: rssSources[0].id, technologyId: technologies[3].id },
-		}),
-
-		// Go Blog - Go関連
-		prisma.sourceTechnology.create({
-			data: { sourceId: rssSources[1].id, technologyId: technologies[5].id },
-		}),
-
-		// React Blog - React関連
-		prisma.sourceTechnology.create({
-			data: { sourceId: rssSources[2].id, technologyId: technologies[0].id },
-		}),
-		prisma.sourceTechnology.create({
-			data: { sourceId: rssSources[2].id, technologyId: technologies[1].id },
-		}),
-
-		// Zenn - 複数技術
-		prisma.sourceTechnology.create({
-			data: { sourceId: rssSources[3].id, technologyId: technologies[0].id },
-		}),
-		prisma.sourceTechnology.create({
-			data: { sourceId: rssSources[3].id, technologyId: technologies[2].id },
-		}),
-
-		// Qiita - 複数技術
-		prisma.sourceTechnology.create({
-			data: { sourceId: rssSources[4].id, technologyId: technologies[4].id },
-		}),
-		prisma.sourceTechnology.create({
-			data: { sourceId: rssSources[4].id, technologyId: technologies[3].id },
-		}),
-	]);
-	console.log(
-		`✅ ${sourceTechnologies.length}個のSourceTechnology関連付けを作成\n`,
-	);
-
-	// 8. RSS Entryデータ（サンプル記事）
-	console.log("8️⃣ RSS Entryデータ作成...");
+	// 7. RSS Entryデータ（サンプル記事）
+	console.log("7️⃣ RSS Entryデータ作成...");
 	const baseDate = new Date("2024-01-15T10:00:00Z");
 	const rssEntries = await Promise.all([
 		prisma.rssEntry.create({
@@ -463,7 +497,7 @@ async function main() {
 	console.log(`✅ ${rssEntries.length}個のRSS Entryを作成\n`);
 
 	// 9. RSS Entry Hashtag関連付け
-	console.log("9️⃣ RSS Entry Hashtag関連付け...");
+	console.log("8️⃣ RSS Entry Hashtag関連付け...");
 	const rssEntryHashtags = await Promise.all([
 		// React Hooks記事
 		prisma.rssEntryHashtag.create({
@@ -513,7 +547,7 @@ async function main() {
 	);
 
 	// 10. Postデータ（ユーザー投稿）
-	console.log("🔟 Postデータ作成...");
+	console.log("9️⃣ Postデータ作成...");
 	const posts = await Promise.all([
 		prisma.post.create({
 			data: {
@@ -564,7 +598,7 @@ async function main() {
 	console.log(`✅ ${posts.length}個のPostを作成\n`);
 
 	// 11. Feed Itemデータ
-	console.log("1️⃣1️⃣ Feed Itemデータ作成...");
+	console.log("🔟 Feed Itemデータ作成...");
 	const feedItems = await Promise.all([
 		// RSS記事のFeedItem
 		...rssEntries.map((entry, index) =>
@@ -594,7 +628,7 @@ async function main() {
 	console.log(`✅ ${feedItems.length}個のFeed Itemを作成\n`);
 
 	// 12. Like・Bookmark・Comment データ
-	console.log("1️⃣2️⃣ Like・Bookmark・Commentデータ作成...");
+	console.log("1️⃣1️⃣ Like・Bookmark・Commentデータ作成...");
 
 	// Likes (FeedItemを使用)
 	const likes = await Promise.all([

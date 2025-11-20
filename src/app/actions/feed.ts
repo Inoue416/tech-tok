@@ -53,60 +53,55 @@ export async function getFeedArticles(
 						lt: cursor, // カーソルより前のアイテムを取得
 					},
 				}),
-				// カテゴリーフィルター
-				...(categoryId && {
-					OR: [
-						{
-							rssEntry: {
-								source: {
-									sourceTechnologies: {
-										some: {
-											technologyId: categoryId,
-										},
-									},
-								},
-							},
-						},
-						{
-							post: {
-								hashtags: {
-									some: {
-										hashtagId: categoryId,
-									},
-								},
-							},
-						},
-					],
-				}),
-			},
-			include: {
-				rssEntry: {
-					include: {
-						source: {
-							include: {
-								sourceTechnologies: {
-									include: {
-										technology: true,
-									},
+			// カテゴリーフィルター
+			...(categoryId && {
+				OR: [
+					{
+						rssEntry: {
+							technologies: {
+								some: {
+									technologyId: categoryId,
 								},
 							},
 						},
 					},
-				},
-				post: {
-					include: {
-						author: true,
-						hashtags: {
-							include: {
-								hashtag: true,
+					{
+						post: {
+							hashtags: {
+								some: {
+									hashtagId: categoryId,
+								},
 							},
+						},
+					},
+				],
+			}),
+		},
+		include: {
+			rssEntry: {
+				include: {
+					source: true,
+					technologies: {
+						include: {
+							technology: true,
 						},
 					},
 				},
 			},
-			orderBy: {
-				publishedAt: "desc",
+			post: {
+				include: {
+					author: true,
+					hashtags: {
+						include: {
+							hashtag: true,
+						},
+					},
+				},
 			},
+		},
+		orderBy: {
+			publishedAt: "desc",
+		},
 			take: limit + 1, // 次のページがあるか確認するため+1
 		});
 
@@ -187,13 +182,10 @@ export async function getArticleById(id: string): Promise<Article | null> {
 			include: {
 				rssEntry: {
 					include: {
-						source: {
+						source: true,
+						technologies: {
 							include: {
-								sourceTechnologies: {
-									include: {
-										technology: true,
-									},
-								},
+								technology: true,
 							},
 						},
 					},

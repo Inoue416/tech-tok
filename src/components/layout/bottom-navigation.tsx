@@ -1,6 +1,7 @@
 "use client";
 
-import { Bookmark, Home, User } from "lucide-react";
+import { Bookmark, Home, LogIn, User } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { NavigationItem } from "@/components/layout/navigation-item";
@@ -8,9 +9,13 @@ import { cn } from "@/lib/utils";
 
 interface BottomNavigationProps {
 	className?: string;
+	isAuthenticated: boolean;
 }
 
-export function BottomNavigation({ className }: BottomNavigationProps) {
+export function BottomNavigation({
+	className,
+	isAuthenticated,
+}: BottomNavigationProps) {
 	const pathname = usePathname();
 
 	const items = useMemo(
@@ -56,9 +61,26 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
 					"shadow-lg shadow-black/10",
 				)}
 			>
-				{items.map((item) => (
-					<NavigationItem key={item.href} {...item} />
-				))}
+				{isAuthenticated ? (
+					items.map((item) => (
+						<NavigationItem key={item.href} {...item} />
+					))
+				) : (
+					<Link
+						href="/login"
+						className={cn(
+							"flex items-center gap-2",
+							"px-4 py-2 rounded-full",
+							"text-sm font-medium",
+							"bg-primary text-primary-foreground",
+							"hover:bg-primary/90",
+							"transition-colors",
+						)}
+					>
+						<LogIn className="h-4 w-4" />
+						<span>ログイン</span>
+					</Link>
+				)}
 			</div>
 		</nav>
 	);

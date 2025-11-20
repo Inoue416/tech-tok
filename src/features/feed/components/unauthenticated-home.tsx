@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ScrollIndicator } from "@/components/scroll-indicator";
-import { FeedItem } from "@/features/feed/components/feed-item";
-import type { FeedItemData } from "@/features/feed/types";
+import type { Article } from "@/features/feed/types/article";
 import { cn } from "@/lib/utils";
+import { ArticleCard } from "./article-card";
 import { LoginPromptSlide } from "./login-prompt-slide";
 import { PersistentLoginBanner } from "./persistent-login-banner";
 
@@ -13,7 +13,7 @@ import { PersistentLoginBanner } from "./persistent-login-banner";
  */
 export interface UnauthenticatedHomeProps {
 	/** プレビュー記事（3つに制限） */
-	articles: FeedItemData[];
+	articles: Article[];
 }
 
 /**
@@ -76,14 +76,9 @@ export function UnauthenticatedHome({ articles }: UnauthenticatedHomeProps) {
 				}}
 			>
 				{/* プレビュー記事 */}
-				{previewArticles.map((item, index) => (
-					<div key={item.id} className="h-screen w-full snap-start snap-always">
-						<FeedItem
-							data={item}
-							isActive={index === currentIndex}
-							onNext={() => scrollToItem(Math.min(3, index + 1))}
-							onPrevious={() => scrollToItem(Math.max(0, index - 1))}
-						/>
+				{previewArticles.map((article, index) => (
+					<div key={article.id} className="h-screen w-full snap-start snap-always">
+						<ArticleCard article={article} isActive={index === currentIndex} />
 					</div>
 				))}
 
