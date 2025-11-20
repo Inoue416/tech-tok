@@ -23,21 +23,23 @@ TechTokは、忙しいエンジニアが効率的に技術情報をキャッチ�
 ## 🛠️ 技術スタック
 
 ### Frontend
-- **Next.js 15** - React フレームワーク
-- **TypeScript** - 型安全なJavaScript
-- **Tailwind CSS** - ユーティリティファーストCSS
+- **Next.js 15.4** - React フレームワーク
+- **React 19** - UIライブラリ
+- **TypeScript 5.9** - 型安全なJavaScript
+- **Tailwind CSS 4** - ユーティリティファーストCSS
 - **Shadcn UI** + **Radix UI** - UIコンポーネント
-- **Storybook** - コンポーネント開発・テスト
+- **Storybook 9** - コンポーネント開発・テスト
 
 ### Backend・Database
-- **Prisma** - ORMとデータベースツール
-- **PostgreSQL** - リレーショナルデータベース
-- **Auth.js (NextAuth.js)** - 認証システム（Google・GitHub OAuth）
+- **Prisma 6.14** - ORMとデータベースツール
+- **PostgreSQL 16** - リレーショナルデータベース
+- **Better Auth 1.3** - 認証システム（Google・GitHub OAuth）
 
 ### Development・Tools
-- **Biome.js** - リンター・フォーマッター
-- **Docker Compose** - ローカル開発環境
-- **pnpm** - パッケージマネージャー
+- **Biome.js 2.1** - リンター・フォーマッター
+- **Docker Compose** - ローカル開発環境（PostgreSQL）
+- **pnpm** - 高速パッケージマネージャー
+- **tsx** - TypeScriptスクリプト実行
 
 ### Deployment（予定）
 - **Vercel** - フロントエンドデプロイ
@@ -46,9 +48,9 @@ TechTokは、忙しいエンジニアが効率的に技術情報をキャッチ�
 ## 🚀 開発環境セットアップ
 
 ### 必要な環境
-- Node.js 18+
-- pnpm 
-- Docker & Docker Compose
+- **Node.js 18+** (推奨: 20以降)
+- **pnpm** (npm install -g pnpm でインストール)
+- **Docker & Docker Compose** (PostgreSQL用)
 
 ### 1. リポジトリのクローン
 ```bash
@@ -63,11 +65,17 @@ pnpm install
 
 ### 3. 環境変数の設定
 ```bash
-# .env.localファイルを作成（.env.sampleを参考に）
-cp .env.sample .env.local
+# .env.localファイルを作成
+touch .env.local
 
-# 必要に応じて編集
-vim .env.local
+# 以下の環境変数を設定
+# DATABASE_URL="postgresql://user:password@localhost:5432/techtok-db"
+# BETTER_AUTH_SECRET="your-random-secret-key"
+# BETTER_AUTH_URL="http://localhost:3000"
+# AUTH_GOOGLE_ID="your-google-client-id"
+# AUTH_GOOGLE_SECRET="your-google-client-secret"
+# AUTH_GITHUB_ID="your-github-client-id"
+# AUTH_GITHUB_SECRET="your-github-client-secret"
 ```
 
 ### 4. データベースの起動
@@ -82,14 +90,16 @@ docker compose ps
 ### 5. データベースセットアップ
 ```bash
 # Prismaクライアント生成
-DATABASE_URL="postgresql://user:password@localhost:5432/techtok-db" npx prisma generate
+npx prisma generate
 
 # データベーススキーマ適用
-DATABASE_URL="postgresql://user:password@localhost:5432/techtok-db" npx prisma db push
+pnpm db:push
 
 # 開発用データ投入
-DATABASE_URL="postgresql://user:password@localhost:5432/techtok-db" pnpm db:seed
+pnpm db:seed
 ```
+
+> 💡 **Note**: 環境変数（DATABASE_URL）は`.env.local`に設定してあることを前提としています。
 
 ### 6. 開発サーバー起動
 ```bash
@@ -102,7 +112,7 @@ pnpm storybook
 # → http://localhost:6006
 
 # Prisma Studio起動（別ターミナル）
-DATABASE_URL="postgresql://user:password@localhost:5432/techtok-db" pnpm db:studio
+pnpm db:studio
 # → http://localhost:5555
 ```
 
@@ -110,8 +120,11 @@ DATABASE_URL="postgresql://user:password@localhost:5432/techtok-db" pnpm db:stud
 
 ### データベース関連
 ```bash
-# シードデータ投入
+# シードデータ投入（ユーザー、投稿、RSS等）
 pnpm db:seed
+
+# 技術スタックデータのみ投入
+pnpm db:seed-tech
 
 # データベース完全リセット + シード実行
 pnpm db:reset
@@ -150,8 +163,9 @@ pnpm format
 ## 📊 データベース構成
 
 ### 主要テーブル
-- **users** - ユーザー情報（Auth.js統合）
+- **users** - ユーザー情報（Better Auth統合）
 - **accounts** - OAuth アカウント情報
+- **sessions** - セッション管理
 - **posts** - ユーザー投稿
 - **rss_sources** - RSS情報源
 - **rss_entries** - RSS記事
@@ -160,39 +174,54 @@ pnpm format
 - **technologies, hashtags** - 分類・タグ
 
 ### 開発用データ
-シードデータで以下のテストデータが投入されます：
-- 👥 5人のテストユーザー（各専門分野）
-- 🔧 10種類の技術スタック
-- 📰 5つのRSS記事 + 5つのユーザー投稿  
-- 🤝 ソーシャル機能のテストデータ
+シードデータ（`pnpm db:seed`）で以下のテストデータが投入されます：
+- 👥 **5人のテストユーザー** - フロントエンド、バックエンド等の専門分野別
+- 🔧 **主要な技術スタック** - React、Next.js、TypeScript、Python等
+- 📰 **RSS記事** - 複数の技術ブログから取得した記事データ
+- 📝 **ユーザー投稿** - テキスト・動画投稿のサンプル  
+- 🤝 **ソーシャルデータ** - いいね、ブックマーク、コメント、フォロー関係
+- 🏷️ **ハッシュタグ** - #react、#typescript等の技術タグ
 
-詳細は [`docs/seed-data-specification.md`](./docs/seed-data-specification.md) を参照。
+詳細は [`docs/seed-data-specification.md`](./docs/seed-data-specification.md) を参照してください。
 
 ## 📁 プロジェクト構成
 
 ```
 tech-tok/
 ├── src/                    # アプリケーションコード
+│   ├── app/                # Next.js App Router
+│   │   ├── actions/        # Server Actions
+│   │   ├── api/           # API Routes
+│   │   └── ...            # ページコンポーネント
 │   ├── components/         # Reactコンポーネント
+│   │   ├── layout/        # レイアウトコンポーネント
+│   │   └── ui/            # 共通UIコンポーネント
+│   ├── features/          # 機能別コンポーネント
+│   │   ├── auth/          # 認証関連
+│   │   ├── feed/          # フィード関連
+│   │   ├── bookmarks/     # ブックマーク関連
+│   │   └── profile/       # プロフィール関連
 │   ├── lib/               # ユーティリティ・設定
-│   ├── types/             # TypeScript型定義
-│   └── app/               # Next.js App Router
+│   └── types/             # TypeScript型定義
 ├── prisma/                # データベース関連
 │   ├── schema.prisma      # データベーススキーマ
 │   └── seed.ts           # シードデータ
 ├── docs/                  # ドキュメント
 ├── scripts/               # ユーティリティスクリプト
+├── public/                # 静的ファイル
 └── docker-compose.yaml    # ローカル開発環境
 ```
 
-## 🔑 認証設定（OAuth）
+## 🔑 認証設定（Better Auth）
 
-Google・GitHub OAuthを使用するには、以下の設定が必要です：
+Better Authを使用したGoogle・GitHub OAuth認証の設定方法：
 
 ### Google OAuth設定
 1. [Google Cloud Console](https://console.cloud.google.com/)でプロジェクト作成
-2. OAuth 2.0 クライアントIDを作成
-3. `.env.local`に設定：
+2. 「APIとサービス」→「認証情報」→「OAuth 2.0 クライアントID」を作成
+3. 承認済みのリダイレクトURIに追加：
+   - `http://localhost:3000/api/auth/callback/google`
+4. `.env.local`に設定：
 ```bash
 AUTH_GOOGLE_ID="your-google-client-id"
 AUTH_GOOGLE_SECRET="your-google-client-secret"
@@ -200,12 +229,23 @@ AUTH_GOOGLE_SECRET="your-google-client-secret"
 
 ### GitHub OAuth設定  
 1. [GitHub Settings > Developer settings](https://github.com/settings/developers)
-2. OAuth Appを作成
-3. `.env.local`に設定：
+2. 「OAuth Apps」→「New OAuth App」を作成
+3. Authorization callback URLに設定：
+   - `http://localhost:3000/api/auth/callback/github`
+4. `.env.local`に設定：
 ```bash
 AUTH_GITHUB_ID="your-github-client-id"
 AUTH_GITHUB_SECRET="your-github-client-secret"
 ```
+
+### Better Auth認証シークレット
+```bash
+# ランダムな文字列を生成して設定
+BETTER_AUTH_SECRET="your-random-secret-key-min-32-characters"
+BETTER_AUTH_URL="http://localhost:3000"
+```
+
+> 💡 **Tip**: `BETTER_AUTH_SECRET`は`openssl rand -base64 32`で生成できます。
 
 ## 🐛 トラブルシューティング
 
@@ -269,4 +309,4 @@ Issues・Pull Requestsお待ちしております！
 
 ---
 
-**最終更新**: 2025-08-16
+**最終更新**: 2025-11-20
