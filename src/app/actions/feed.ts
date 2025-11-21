@@ -13,34 +13,52 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 /**
- * JSTで今日の開始時刻（00:00:00）を取得
+ * JSTで今日の開始時刻（00:00:00）をUTCで取得
+ * データベースのcreatedAtはUTCで保存されているため、JSTの日付範囲をUTCに変換して検索する
  */
 function getTodayStartJST(): Date {
+	// 現在のUTC時刻を取得
 	const now = new Date();
-	const jstOffset = 9 * 60; // JST is UTC+9
-	const localOffset = now.getTimezoneOffset();
-	const jstTime = new Date(now.getTime() + (jstOffset + localOffset) * 60000);
-
-	jstTime.setHours(0, 0, 0, 0);
-
-	// Convert back to UTC for database query
-	const utcTime = new Date(jstTime.getTime() - jstOffset * 60000);
+	
+	// UTC時刻をJST（UTC+9）に変換
+	const jstTime = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+	
+	// JSTで今日の開始時刻（00:00:00）を設定
+	const jstYear = jstTime.getUTCFullYear();
+	const jstMonth = jstTime.getUTCMonth();
+	const jstDate = jstTime.getUTCDate();
+	
+	// JSTの00:00:00をUTC時刻として表現
+	const jstDayStart = new Date(Date.UTC(jstYear, jstMonth, jstDate, 0, 0, 0, 0));
+	
+	// JSTで設定した時刻をUTCに戻す（-9時間）
+	const utcTime = new Date(jstDayStart.getTime() - 9 * 60 * 60 * 1000);
+	
 	return utcTime;
 }
 
 /**
- * JSTで今日の終了時刻（23:59:59.999）を取得
+ * JSTで今日の終了時刻（23:59:59.999）をUTCで取得
+ * データベースのcreatedAtはUTCで保存されているため、JSTの日付範囲をUTCに変換して検索する
  */
 function getTodayEndJST(): Date {
+	// 現在のUTC時刻を取得
 	const now = new Date();
-	const jstOffset = 9 * 60; // JST is UTC+9
-	const localOffset = now.getTimezoneOffset();
-	const jstTime = new Date(now.getTime() + (jstOffset + localOffset) * 60000);
-
-	jstTime.setHours(23, 59, 59, 999);
-
-	// Convert back to UTC for database query
-	const utcTime = new Date(jstTime.getTime() - jstOffset * 60000);
+	
+	// UTC時刻をJST（UTC+9）に変換
+	const jstTime = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+	
+	// JSTで今日の終了時刻（23:59:59.999）を設定
+	const jstYear = jstTime.getUTCFullYear();
+	const jstMonth = jstTime.getUTCMonth();
+	const jstDate = jstTime.getUTCDate();
+	
+	// JSTの23:59:59.999をUTC時刻として表現
+	const jstDayEnd = new Date(Date.UTC(jstYear, jstMonth, jstDate, 23, 59, 59, 999));
+	
+	// JSTで設定した時刻をUTCに戻す（-9時間）
+	const utcTime = new Date(jstDayEnd.getTime() - 9 * 60 * 60 * 1000);
+	
 	return utcTime;
 }
 
