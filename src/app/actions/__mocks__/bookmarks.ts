@@ -9,7 +9,7 @@ export async function getBookmarks() {
 	};
 }
 
-export async function removeBookmark(bookmarkId: string) {
+export async function removeBookmark(_bookmarkId: string) {
 	console.warn("[Storybook] removeBookmark was called but is mocked");
 	return {
 		success: true,

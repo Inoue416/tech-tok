@@ -9,7 +9,7 @@ export async function getProfile() {
 	};
 }
 
-export async function updateProfile(data: any) {
+export async function updateProfile(data: Record<string, unknown>) {
 	console.warn("[Storybook] updateProfile was called but is mocked");
 	return {
 		success: true,

@@ -8,7 +8,7 @@ export const auth = {
 		signOut: async () => ({ success: true }),
 	},
 	$Infer: {
-		Session: {} as any,
+		Session: {} as Record<string, never>,
 	},
 };
 

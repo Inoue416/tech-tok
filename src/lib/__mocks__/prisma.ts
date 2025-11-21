@@ -41,7 +41,7 @@ const mockPrisma = {
 		findMany: async () => [],
 		create: async () => ({}),
 	},
-	$transaction: async (fn: any) => {
+	$transaction: async (fn: unknown) => {
 		if (typeof fn === "function") {
 			return fn(mockPrisma);
 		}
@@ -50,6 +50,6 @@ const mockPrisma = {
 	$disconnect: async () => {},
 };
 
-export const prisma = mockPrisma as any;
+export const prisma = mockPrisma as unknown;
 export default mockPrisma;
 

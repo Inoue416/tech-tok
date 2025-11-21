@@ -61,7 +61,9 @@ export function VerticalFeed({
 
 		// すべての記事要素を監視
 		const elements = containerRef.current.querySelectorAll("[data-index]");
-		elements.forEach((el) => observerRef.current?.observe(el));
+		elements.forEach((el) => {
+			observerRef.current?.observe(el);
+		});
 
 		return () => {
 			observerRef.current?.disconnect();
