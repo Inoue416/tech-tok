@@ -3,9 +3,7 @@
  * このスクリプトはPostgreSQLデータベースとPrismaクライアントの疎通確認を行います
  */
 
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from "@/lib/prisma";
 
 async function testDatabaseConnection() {
   console.log('🔍 データベース疎通テストを開始します...\n')

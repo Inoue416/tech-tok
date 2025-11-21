@@ -3,9 +3,7 @@
  * 開発環境用のテストデータを投入するスクリプト
  */
 
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 async function main() {
 	console.log("🌱 シードデータの投入を開始します...\n");

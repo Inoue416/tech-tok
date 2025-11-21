@@ -96,11 +96,11 @@ export function ClientProfile({
 		if (!result.success) {
 			throw new Error(result.error);
 		}
-		// 成功時はログアウトしてホームページにリダイレクト
+		// 成功時はログアウトして退会完了ページにリダイレクト
 		await authClient.signOut({
 			fetchOptions: {
 				onSuccess: () => {
-					router.push("/");
+					router.push("/account-deleted");
 				},
 			},
 		});

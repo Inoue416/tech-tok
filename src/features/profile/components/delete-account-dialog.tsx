@@ -70,27 +70,28 @@ export function DeleteAccountDialog({
 	return (
 		<Dialog open={open} onOpenChange={handleOpenChange}>
 			<DialogContent>
-				<DialogHeader>
-					<div className="flex items-center gap-2 text-destructive">
-						<AlertTriangle className="size-5" />
-						<DialogTitle>アカウントを削除しますか？</DialogTitle>
-					</div>
-					<DialogDescription className="space-y-2 pt-2">
-						<p className="font-semibold text-foreground">
-							この操作は取り消せません。
-						</p>
-						<p>
-							アカウントを削除すると、以下のデータがすべて完全に削除されます：
-						</p>
-						<ul className="list-disc list-inside space-y-1 text-sm">
-							<li>プロフィール情報</li>
-							<li>投稿したすべてのコンテンツ</li>
-							<li>いいね、ブックマーク、コメント</li>
-							<li>フォロー/フォロワー情報</li>
-							<li>技術スタック設定</li>
-						</ul>
-					</DialogDescription>
-				</DialogHeader>
+			<DialogHeader>
+				<div className="flex items-center gap-2 text-destructive">
+					<AlertTriangle className="size-5" />
+					<DialogTitle>アカウントを削除しますか？</DialogTitle>
+				</div>
+				<DialogDescription>
+					この操作は取り消せません。
+				</DialogDescription>
+			</DialogHeader>
+
+			<div className="space-y-2 text-sm">
+				<div className="font-semibold text-foreground">
+					アカウントを削除すると、以下のデータがすべて完全に削除されます：
+				</div>
+				<ul className="list-disc list-inside space-y-1 text-muted-foreground">
+					<li>プロフィール情報</li>
+					<li>投稿したすべてのコンテンツ</li>
+					<li>いいね、ブックマーク、コメント</li>
+					<li>フォロー/フォロワー情報</li>
+					<li>技術スタック設定</li>
+				</ul>
+			</div>
 
 				<div className="space-y-4 py-4">
 					<div className="space-y-2">
