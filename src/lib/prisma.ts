@@ -3,14 +3,24 @@
  * データベース接続のシングルトンインスタンス
  */
 
-import { PrismaClient } from "@prisma/client";
+import "dotenv/config";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "@/generated/prisma/client";
 
-declare global {
-	var cachedPrisma: PrismaClient | undefined;
-}
+const globalForPrisma = global as unknown as {
+  prisma: PrismaClient;
+};
 
-export const prisma = globalThis.cachedPrisma || new PrismaClient();
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+
+export const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    adapter,
+  });
 
 if (process.env.NODE_ENV !== "production") {
-	globalThis.cachedPrisma = prisma;
+  globalForPrisma.prisma = prisma;
 }

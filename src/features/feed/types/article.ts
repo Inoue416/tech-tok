@@ -9,7 +9,7 @@ import type {
 	RssEntry,
 	Technology,
 	User,
-} from "@prisma/client";
+} from "@/generated/prisma/client";
 
 /**
  * カテゴリー（技術スタック）

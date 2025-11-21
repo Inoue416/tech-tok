@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { sampleFeedData } from "../mocks/sample-data";
+import { sampleArticles } from "../mocks/sample-data";
 import { UnauthenticatedHome } from "./unauthenticated-home";
 
 const meta: Meta<typeof UnauthenticatedHome> = {
@@ -24,7 +24,7 @@ type Story = StoryObj<typeof UnauthenticatedHome>;
  */
 export const Default: Story = {
 	args: {
-		articles: sampleFeedData,
+		articles: sampleArticles,
 	},
 };
 
@@ -33,7 +33,7 @@ export const Default: Story = {
  */
 export const FewArticles: Story = {
 	args: {
-		articles: sampleFeedData.slice(0, 2),
+		articles: sampleArticles.slice(0, 2),
 	},
 };
 
@@ -42,7 +42,7 @@ export const FewArticles: Story = {
  */
 export const SingleArticle: Story = {
 	args: {
-		articles: sampleFeedData.slice(0, 1),
+		articles: sampleArticles.slice(0, 1),
 	},
 };
 
@@ -51,7 +51,7 @@ export const SingleArticle: Story = {
  */
 export const Mobile: Story = {
 	args: {
-		articles: sampleFeedData,
+		articles: sampleArticles,
 	},
 	parameters: {
 		viewport: {
@@ -65,7 +65,7 @@ export const Mobile: Story = {
  */
 export const Tablet: Story = {
 	args: {
-		articles: sampleFeedData,
+		articles: sampleArticles,
 	},
 	parameters: {
 		viewport: {
