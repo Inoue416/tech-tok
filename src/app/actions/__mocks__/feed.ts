@@ -2,7 +2,7 @@
  * Storybook用のfeed Server Actionsモック
  */
 
-export async function getArticles(cursor?: string) {
+export async function getArticles(_cursor?: string) {
 	console.warn("[Storybook] getArticles was called but is mocked");
 	return {
 		articles: [],
@@ -10,7 +10,7 @@ export async function getArticles(cursor?: string) {
 	};
 }
 
-export async function getArticleById(articleId: string) {
+export async function getArticleById(_articleId: string) {
 	console.warn("[Storybook] getArticleById was called but is mocked");
 	return {
 		article: null,
