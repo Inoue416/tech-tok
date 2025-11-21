@@ -126,6 +126,9 @@ pnpm db:seed
 # 技術スタックデータのみ投入
 pnpm db:seed-tech
 
+# RSSソースデータのみ投入
+pnpm db:seed-rss-source
+
 # データベース完全リセット + シード実行
 pnpm db:reset
 

@@ -11,6 +11,7 @@
 		"storybook": "storybook dev -p 6006",
 		"db:seed": "tsx prisma/seed.ts",
 		"db:seed-tech": "tsx scripts/seed-technologies.ts",
+		"db:seed-rss-source": "tsx scripts/seed-rss-source.ts",
 		"db:studio": "DATABASE_URL=\"postgresql://user:password@localhost:5432/techtok-db\" prisma studio",
 		"db:push": "prisma db push",
 		"db:reset": "prisma migrate reset --force && pnpm db:seed"
