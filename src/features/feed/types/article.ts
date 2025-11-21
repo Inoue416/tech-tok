@@ -48,10 +48,10 @@ export type FeedItemWithRelations = FeedItem & {
 		| (RssEntry & {
 				source: {
 					title: string | null;
-					sourceTechnologies: {
-						technology: Technology;
-					}[];
 				};
+				technologies: {
+					technology: Technology;
+				}[];
 		  })
 		| null;
 	post:
@@ -78,17 +78,17 @@ export function rssEntryToArticle(
 	userBookmarks?: Set<string>,
 ): Article {
 	const categories: Category[] =
-		entry.source.sourceTechnologies.map((st) => ({
-			id: st.technology.id,
-			name: st.technology.name,
-			color: st.technology.color,
+		entry.technologies.map((et) => ({
+			id: et.technology.id,
+			name: et.technology.name,
+			color: et.technology.color,
 		})) || [];
 
 	return {
 		id: feedItem.id,
 		type: "rss",
 		title: entry.title,
-		content: entry.contentText || entry.description || "",
+		content: entry.aiSummary || entry.contentText || entry.description || "",
 		authorName: entry.authorName || entry.source.title || "Unknown",
 		authorAvatar: entry.imageUrl || undefined,
 		originalUrl: entry.link || undefined,

@@ -62,13 +62,10 @@ export async function getBookmarkedArticles(
 					include: {
 						rssEntry: {
 							include: {
-								source: {
+								source: true,
+								technologies: {
 									include: {
-										sourceTechnologies: {
-											include: {
-												technology: true,
-											},
-										},
+										technology: true,
 									},
 								},
 							},

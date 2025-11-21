@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { getFeedArticles } from "@/app/actions/feed";
 import { UnauthenticatedHomeWrapper } from "@/features/feed/components/unauthenticated-home-wrapper";
-import { articleToFeedItemData } from "@/features/feed/types/converters";
 import { getSession } from "@/lib/auth";
+import type { Article } from "@/features/feed/types/article";
 
 /**
  * ホームページコンポーネント（サーバーコンポーネント）
@@ -23,36 +23,19 @@ export default async function Home() {
 
 	// 認証済みユーザーは/feedにリダイレクト
 	if (session?.user) {
-		try {
-			redirect("/feed");
-		} catch (error) {
-			// リダイレクトエラーの処理
-			// Next.jsのredirect()は内部的にエラーをthrowするため、
-			// 通常のリダイレクトとエラーを区別する必要がある
-			console.error("Redirect error:", error);
-
-			// NEXT_REDIRECTエラーは正常なリダイレクトなので再スロー
-			if (error && typeof error === "object" && "digest" in error) {
-				throw error;
-			}
-
-			// その他のエラーはフォールバック処理へ
-			// クライアントサイドでのフォールバックナビゲーションを試みる
-		}
+		redirect("/feed");
 	}
 
 	// プレビュー記事を取得（最初の3記事）
-	let feedItems: ReturnType<typeof articleToFeedItemData>[] = [];
+	let articles: Article[] = [];
 	let error: string | null = null;
 
 	try {
-		const { articles } = await getFeedArticles({ limit: 3 });
-
-		// ArticleをFeedItemDataに変換
-		feedItems = articles.map(articleToFeedItemData);
+		const result = await getFeedArticles({ limit: 3 });
+		articles = result.articles;
 
 		// 記事が取得できなかった場合
-		if (feedItems.length === 0) {
+		if (articles.length === 0) {
 			error =
 				"現在表示できる記事がありません。しばらくしてから再度お試しください。";
 		}
@@ -67,5 +50,5 @@ export default async function Home() {
 
 	// 未認証ホームラッパーコンポーネントをレンダリング
 	// エラー状態とリトライ機能を含む
-	return <UnauthenticatedHomeWrapper articles={feedItems} error={error} />;
+	return <UnauthenticatedHomeWrapper articles={articles} error={error} />;
 }

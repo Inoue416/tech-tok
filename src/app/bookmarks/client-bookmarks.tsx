@@ -56,11 +56,20 @@ export function ClientBookmarks({ initialData }: ClientBookmarksProps) {
 					limit: 20,
 				});
 
-				setData((prev) => ({
-					articles: [...prev.articles, ...result.articles],
-					nextCursor: result.nextCursor,
-					hasMore: result.hasMore,
-				}));
+				// 重複を除外してマージ
+				setData((prev) => {
+					const existingIds = new Set(
+						prev.articles.map((article) => article.id),
+					);
+					const newArticles = result.articles.filter(
+						(article) => !existingIds.has(article.id),
+					);
+					return {
+						articles: [...prev.articles, ...newArticles],
+						nextCursor: result.nextCursor,
+						hasMore: result.hasMore,
+					};
+				});
 			} catch (err) {
 				console.error("Failed to load more bookmarks:", err);
 				setError(

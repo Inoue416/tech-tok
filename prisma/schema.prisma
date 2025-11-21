@@ -8,6 +8,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ============================================================================
@@ -246,14 +247,14 @@ model Notification {
 
 model Technology {
   id        String   @id @default(cuid())
-  name      String
+  name      String   @unique
   category  String?
   color     String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  userTechnologies   UserTechnology[]
-  sourceTechnologies SourceTechnology[]
+  userTechnologies     UserTechnology[]
+  rssEntryTechnologies RssEntryTechnology[]
 
   @@map("technologies")
 }
@@ -291,9 +292,8 @@ model RssSource {
   createdAt              DateTime @default(now()) @map("created_at")
   updatedAt              DateTime @updatedAt @map("updated_at")
 
-  entries            RssEntry[]
-  fetchLogs          RssFetchLog[]
-  sourceTechnologies SourceTechnology[]
+  entries   RssEntry[]
+  fetchLogs RssFetchLog[]
 
   @@index([isActive])
   @@index([lastFetchedAt])
@@ -309,6 +309,7 @@ model RssEntry {
   description   String?   @db.Text
   contentHtml   String?   @map("content_html") @db.Text
   contentText   String?   @map("content_text") @db.Text
+  aiSummary     String?   @map("ai_summary") @db.Text
   authorName    String?   @map("author_name")
   language      String?
   imageUrl      String?   @map("image_url")
@@ -316,10 +317,11 @@ model RssEntry {
   updatedAt     DateTime  @updatedAt @map("updated_at")
   contentHash   String    @map("content_hash")
 
-  source      RssSource         @relation(fields: [sourceId], references: [id], onDelete: Cascade)
-  enclosures  RssEnclosure[]
-  hashtags    RssEntryHashtag[]
-  feedItems   FeedItem[]
+  source       RssSource              @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  enclosures   RssEnclosure[]
+  hashtags     RssEntryHashtag[]
+  feedItems    FeedItem[]
+  technologies RssEntryTechnology[]
 
   @@unique([sourceId, guid])
   @@index([publishedAt])
@@ -372,17 +374,19 @@ model RssFetchLog {
   @@map("rss_fetch_logs")
 }
 
-model SourceTechnology {
+model RssEntryTechnology {
   id           String   @id @default(cuid())
-  sourceId     String   @map("source_id")
+  entryId      String   @map("entry_id")
   technologyId String   @map("technology_id")
   createdAt    DateTime @default(now()) @map("created_at")
 
-  source     RssSource  @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  entry      RssEntry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
   technology Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
 
-  @@unique([sourceId, technologyId])
-  @@map("source_technologies")
+  @@unique([entryId, technologyId])
+  @@index([entryId])
+  @@index([technologyId])
+  @@map("rss_entry_technologies")
 }
 
 // ============================================================================

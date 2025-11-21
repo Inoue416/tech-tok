@@ -42,7 +42,7 @@ export function ArticleCard({
 	return (
 		<div
 			className={cn(
-				"h-full w-full flex items-center justify-center p-4 md:p-8",
+				"h-full w-full flex items-start justify-center pt-6 px-4 pb-4 md:p-8 overflow-y-auto",
 				className,
 			)}
 		>
