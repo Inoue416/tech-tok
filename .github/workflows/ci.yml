@@ -11,6 +11,8 @@ on:
       - main
       - release
       - develop
+env:
+  DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
 jobs:
   build:
@@ -33,9 +35,6 @@ jobs:
 
       - name: Run lint
         run: pnpm lint
-      # .env.sample を .env にコピー (シークレット情報は含んでない)
-      - name: Copy .env.sample to .env
-        run: cp .env.sample .env
 
       - name: Build project
         run: pnpm build
