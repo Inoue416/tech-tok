@@ -37,7 +37,8 @@ const mockFeedItems: FeedItemData[] = [
 		author: {
 			id: "author-1",
 			name: "Tech Writer",
-			avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
+			avatar:
+				"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
 		},
 		stats: {
 			likes: 1200,
@@ -57,7 +58,8 @@ const mockFeedItems: FeedItemData[] = [
 		author: {
 			id: "author-2",
 			name: "Code Instructor",
-			avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
+			avatar:
+				"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
 		},
 		stats: {
 			likes: 2500,
@@ -78,7 +80,8 @@ const mockFeedItems: FeedItemData[] = [
 		author: {
 			id: "author-3",
 			name: "Software Engineer",
-			avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=32&h=32&fit=crop&crop=face",
+			avatar:
+				"https://images.unsplash.com/photo-1494790108755-2616b612b786?w=32&h=32&fit=crop&crop=face",
 		},
 		stats: {
 			likes: 890,
@@ -98,7 +101,8 @@ const mockFeedItems: FeedItemData[] = [
 		author: {
 			id: "author-4",
 			name: "WASM Expert",
-			avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop&crop=face",
+			avatar:
+				"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop&crop=face",
 		},
 		stats: {
 			likes: 1580,
@@ -118,7 +122,8 @@ const mockFeedItems: FeedItemData[] = [
 		author: {
 			id: "author-5",
 			name: "API Architect",
-			avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
+			avatar:
+				"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
 		},
 		stats: {
 			likes: 2100,
@@ -196,7 +201,8 @@ export const VideoHeavy: Story = {
 				author: {
 					id: "author-6",
 					name: "JS Guru",
-					avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
+					avatar:
+						"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
 				},
 				hashtags: ["JavaScript", "非同期処理", "Promise"],
 			},

@@ -43,8 +43,12 @@ export const Default: Story = {
 		<div className="relative h-screen bg-gradient-to-br from-blue-500 to-purple-600">
 			<div className="flex h-full items-center justify-center">
 				<div className="text-center text-white">
-					<h1 className="mb-4 text-4xl font-bold">アイテム {args.current + 1}</h1>
-					<p className="text-lg">右側のインジケーターをクリックしてナビゲーション</p>
+					<h1 className="mb-4 text-4xl font-bold">
+						アイテム {args.current + 1}
+					</h1>
+					<p className="text-lg">
+						右側のインジケーターをクリックしてナビゲーション
+					</p>
 				</div>
 			</div>
 			<ScrollIndicator {...args} />
@@ -59,15 +63,18 @@ export const Interactive: Story = {
 	render: () => {
 		const [current, setCurrent] = useState(0);
 		const total = 8;
-		
+
 		return (
 			<div className="relative h-screen bg-gradient-to-br from-green-500 to-blue-600">
 				<div className="flex h-full items-center justify-center">
 					<div className="text-center text-white">
 						<h1 className="mb-4 text-4xl font-bold">スライド {current + 1}</h1>
-						<p className="text-lg mb-4">インジケーターをクリックしてナビゲーション</p>
+						<p className="text-lg mb-4">
+							インジケーターをクリックしてナビゲーション
+						</p>
 						<div className="space-x-4">
 							<button
+								type="button"
 								className="rounded bg-white/20 px-4 py-2 text-white hover:bg-white/30"
 								onClick={() => setCurrent(Math.max(0, current - 1))}
 								disabled={current === 0}
@@ -75,6 +82,7 @@ export const Interactive: Story = {
 								前へ
 							</button>
 							<button
+								type="button"
 								className="rounded bg-white/20 px-4 py-2 text-white hover:bg-white/30"
 								onClick={() => setCurrent(Math.min(total - 1, current + 1))}
 								disabled={current === total - 1}
@@ -139,10 +147,7 @@ export const CustomStyle: Story = {
 					<p className="text-lg">左側に配置されたインジケーター</p>
 				</div>
 			</div>
-			<ScrollIndicator
-				{...args}
-				className="left-4 right-auto"
-			/>
+			<ScrollIndicator {...args} className="left-4 right-auto" />
 		</div>
 	),
 };

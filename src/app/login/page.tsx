@@ -1,24 +1,29 @@
-"use client";
-
+import { redirect } from "next/navigation";
 import { LoginForm } from "@/features/auth/components/login-form";
+import { getSession } from "@/lib/auth";
 
 /**
  * ログインページ
+ * 既にログイン済みの場合はフィードページにリダイレクト
  */
-export default function LoginPage() {
-	/**
-	 * OAuthログインのハンドラー（後で実装予定）
-	 */
-	const handleOAuthLogin = (provider: "github" | "google") => {
-		console.log(`OAuth login with ${provider}`);
-		// TODO: NextAuth.jsを使用したOAuth認証の実装
-	};
+export default async function LoginPage({
+	searchParams,
+}: {
+	searchParams: Promise<{ callbackUrl?: string }>;
+}) {
+	// セッションチェック
+	const session = await getSession();
 
-	return (
-		<LoginForm
-			onOAuthLogin={handleOAuthLogin}
-			// isLoading={false}
-			// error="ログインエラーのテスト"
-		/>
-	);
+	// searchParamsをawaitで解決
+	const params = await searchParams;
+
+	// callbackUrlを取得（デフォルトは/feed）
+	const callbackUrl = params.callbackUrl || "/feed";
+
+	// 既にログイン済みの場合はcallbackUrlにリダイレクト
+	if (session?.user) {
+		redirect(callbackUrl);
+	}
+
+	return <LoginForm callbackUrl={callbackUrl} />;
 }

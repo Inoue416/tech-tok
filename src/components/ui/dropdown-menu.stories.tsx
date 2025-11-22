@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import { useState } from "react";
+import { Button } from "./button";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
-	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuRadioGroup,
@@ -16,7 +16,6 @@ import {
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "./dropdown-menu";
-import { Button } from "./button";
 
 const meta: Meta<typeof DropdownMenu> = {
 	title: "ui/DropdownMenu",
