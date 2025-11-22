@@ -302,10 +302,6 @@ git checkout -b feature/your-feature-name
 - 新しいコンポーネント作成時は、同時にStorybookファイルも作成
 - APIコール部分はmockingしてStorybook動作確認
 
-## 📄 ライセンス
-
-MIT License
-
 ---
 
 **最終更新**: 2025-11-20
