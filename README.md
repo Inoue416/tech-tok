@@ -306,10 +306,6 @@ git checkout -b feature/your-feature-name
 
 MIT License
 
-## 👥 貢献
-
-Issues・Pull Requestsお待ちしております！
-
 ---
 
 **最終更新**: 2025-11-20
